@@ -1,18 +1,38 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { backendURL } from "../settings";
+import Loader from "../components/Loader";
 
 const Signup: React.FC = () => {
+  const [id, setId] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
   //TODO : Add useMutation
   async function createUser(e: FormEvent) {
     e.preventDefault();
 
     //Retrieve Data
+    const act_id: number = Math.floor(Math.random() * 999999999);
     const form: FormData = new FormData(e.target as HTMLFormElement);
-    const formData: Object = Object.fromEntries(form.entries());
-    const res = await axios.post(backendURL + "/create/user", formData);
-    console.log(res);
+    const formData: Object = {
+      username: form.get("name") + `:${act_id}`,
+      email: form.get("email"),
+    };
+    setId(act_id);
+    console.log(formData);
+
+    //Send it to our backend
+    setLoading(true);
+    const res = await axios.post(backendURL + "/email/verify-email", formData);
+    const id: string = res.data.otp_object._id;
+    const uID: string = res.data.otp_object.username;
+
+    //Redirect
+    window.location.href = `/v/verify?id=${id}&uID=${uID}&e=${form.get(
+      "email"
+    )}`;
+    setLoading(false);
   }
 
   return (
@@ -27,7 +47,7 @@ const Signup: React.FC = () => {
         <div className="flex h-screen w-screen">
           {/* Actual thing */}
           <div className="m-auto flex flex-col items-center">
-            <h1 className="font-ez text-center text-7xl">Signup</h1>
+            <h1 className="font-ez text-center text-7xl">signup</h1>
             <form
               className="w-full max-w-sm mx-auto p-8 rounded-md flex flex-col items-center"
               onSubmit={createUser}
@@ -37,7 +57,7 @@ const Signup: React.FC = () => {
                   className="block text-gray-700 text-md font-ez mb-2"
                   htmlFor="name"
                 >
-                  Username 😀😆😅
+                  username 😀😆😅
                 </label>
                 <input
                   className="font-ez px-3 py-2 border border-gray-300 rounded-md outline-none focus:outline-none focus:border-black transition-all text-sm w-full"
@@ -51,26 +71,46 @@ const Signup: React.FC = () => {
               <div className="mb-4 w-full">
                 <label
                   className="block text-gray-700 text-md font-ez mb-2"
+                  htmlFor="email"
+                >
+                  email 📧💬📦
+                </label>
+                <input
+                  className="font-ez px-3 py-2 border border-gray-300 rounded-md outline-none focus:outline-none focus:border-black transition-all text-sm w-full"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="fluffykitty@gmail.com"
+                />
+              </div>
+
+              <div className="mb-4 w-full">
+                <label
+                  className="block text-gray-700 text-md font-ez mb-2"
                   htmlFor="password"
                 >
-                  Password 🔑🤐 🔒
+                  password 🔒🔑🤐
                 </label>
                 <input
                   className="font-ez px-3 py-2 border border-gray-300 rounded-md outline-none focus:outline-none focus:border-black transition-all text-sm w-full"
                   type="password"
                   id="password"
-                  name="password"
-                  placeholder="fluffykitty@123"
                 />
               </div>
 
-              <button className="relative inline-block text-lg group w-40 font-ez scale-90">
-                <span className="relative z-10 block px-5 py-3 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
-                  <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
-                  <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
-                  <span className="relative">join now</span>
-                </span>
-              </button>
+              {loading ? (
+                <Loader size={0.6} />
+              ) : (
+                <button className="relative inline-block text-lg group w-40 font-ez scale-90">
+                  <span className="relative z-10 block px-5 py-3 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
+                    <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
+                    <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
+                    <span className="relative">
+                      <span>join now</span>
+                    </span>
+                  </span>
+                </button>
+              )}
             </form>
           </div>
         </div>

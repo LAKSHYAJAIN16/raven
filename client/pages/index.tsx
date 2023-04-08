@@ -1,9 +1,29 @@
 import Head from "next/head";
-import React from "react";
+import React, { useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import NotificationManager, {
+  NotificationType,
+} from "../components/NotificationManager";
+import NotificationParent from "../components/NotificationParent";
+import Notif from "../components/Notif";
 
 const queryClient = new QueryClient();
 const Home: React.FC = () => {
+  function notifTest() {
+    console.log("hey!");
+    Notif.add({
+      color: "red",
+      bg: "bg-red-100",
+      border: "border-red-500",
+      text: "text-red-900",
+      fill: "text-red-500",
+      type: NotificationType.alert,
+      duration: 1000,
+      head: "Alert!",
+      content: "That username is taken",
+    });
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <Head>
@@ -18,7 +38,10 @@ const Home: React.FC = () => {
           <div className="m-auto flex flex-col items-center">
             <h1 className="font-ez text-center text-8xl">raven</h1>
             <p className="text-center font-ez">
-              <span className="font-extrabold text-transparent text-4xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+              <span
+                onClick={() => notifTest()}
+                className="font-extrabold text-transparent text-4xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+              >
                 privacy.{" "}
               </span>
               <span className="font-extrabold text-transparent text-4xl bg-clip-text bg-gradient-to-r from-green-400 to-blue-600">
@@ -43,7 +66,45 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className="h-screen absolute w-screen z-1  background"></div>
+      <NotificationParent />
+      {/* <NotificationManager
+        notifications={[
+          {
+            color: "red",
+            bg : "bg-red-100",
+            border : "border-red-500",
+            text : "text-red-900",
+            fill : "text-red-500",
+            type: NotificationType.alert,
+            duration: 1000,
+            head : "Alert!",
+            content : "That username is taken",
+          },
+          {
+            color: "blue",
+            bg : "bg-blue-100",
+            border : "border-blue-500",
+            text : "text-blue-900",
+            fill : "text-blue-500",
+            type: NotificationType.information,
+            duration: 1000,
+            head : "Alert!",
+            content : "That username is taken",
+          },
+          {
+            color: "teal",
+            bg : "bg-teal-100",
+            border : "border-teal-500",
+            text : "text-teal-900",
+            fill : "text-teal-500",
+            type: NotificationType.update,
+            duration: 1000,
+            head : "Alert!",
+            content : "That username is taken",
+          },
+        ]}
+      /> */}
+      <div className="h-screen absolute w-screen z-1 background"></div>
     </QueryClientProvider>
   );
 };
