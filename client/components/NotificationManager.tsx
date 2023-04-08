@@ -8,27 +8,48 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({
       <div className="absolute bottom-3 left-3 bg-transparent">
         {notifications.map((e) => (
           <>
-            <div
-              className={`${e.bg} border-t-4 ${e.border} rounded-b ${e.text} px-4 py-3 shadow-md mb-5 transition-all invisible lg:visible`}
-              role="alert"
-            >
-              <div className="flex">
-                <div className="py-1">
-                  <img
-                    className={`fill-curren${e.fill} mr-4 h-9 w-9`}
-                    src={typeToSVG(e.type)}
-                  ></img>
-                </div>
-                <div>
-                  <p className="font-bold">{e.head}</p>
-                  <p className="text-sm">{e.content}</p>
-                </div>
-              </div>
-            </div>
+            <Notification e={e} />
           </>
         ))}
       </div>
     </div>
+  );
+};
+
+const Notification: React.FC<NotificationObject> = ({ e }) => {
+  const [show, setShow] = useState<boolean>(true);
+
+  useEffect(() => {
+    const id = setInterval(timer, e.duration);
+    return () => clearInterval(id);
+  }, []);
+
+  const timer = () => setShow(false);
+
+  return (
+    <>
+      {show === true ? (
+        <div
+          className={`${e.bg} border-t-4 ${e.border} rounded-b ${e.text} px-4 py-3 shadow-md mb-5 transition-all `}
+          role="alert"
+        >
+          <div className="flex">
+            <div className="py-1">
+              <img
+                className={`fill-curren${e.fill} mr-4 h-9 w-9`}
+                src={typeToSVG(e.type)}
+              ></img>
+            </div>
+            <div>
+              <p className="font-bold">{e.head}</p>
+              <p className="text-sm">{e.content}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
@@ -48,13 +69,17 @@ export interface NotificationRaven {
   head: string;
 }
 
+export interface NotificationObject {
+  e: NotificationRaven;
+}
+
 export enum NotificationType {
   alert,
   information,
   update,
 }
 
-function typeToSVG(type: NotificationType) {
+export function typeToSVG(type: NotificationType) {
   switch (type) {
     case NotificationType.alert:
       return "/warning.png";

@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import Loader from "../../components/Loader";
 import axios from "axios";
 import { backendURL } from "../../settings";
+import NotificationManager, {
+  NotificationRaven,
+  NotificationType,
+} from "../../components/NotificationManager";
 
 const Verify: React.FC = () => {
   const [id, setId] = useState<string>("");
   const [uID, setUID] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<NotificationRaven[]>([]);
 
   useEffect(() => {
     const searchParams: URLSearchParams = new URL(window.location.href)
@@ -19,6 +24,8 @@ const Verify: React.FC = () => {
     setUID(act_UID);
     setEmail(act_email);
   }, []);
+
+  useEffect(() => {}, [notifications]);
 
   function onOTPType(str: string, val: string) {
     if (val === "") return;
@@ -72,10 +79,76 @@ const Verify: React.FC = () => {
       email: email,
       otp: otp,
     };
+    console.log(payload);
 
     //Send to axios backend
     const res = await axios.post(backendURL + "/create/user", payload);
     console.log(res);
+
+    //Check response and send notification accordingly
+    if (res.data.code === 1) {
+      //Wrong OTP
+      sendNotification("Error : Wrong OTP", "Try Retyping the OTP.");
+    } else if (res.data.code === 4) {
+      //Wrong OTP
+      sendNotification("Error : OTP Expired", "Try generating a new OTP.");
+    } else if (res.data.code === 3) {
+      //Wrong OTP
+      sendNotification("Error : Wrong URL", "Try Signing up again.");
+    } else if (res.data.code === 2) {
+      //We're logged in boiz!
+      localStorage.setItem("base", JSON.stringify(res.data.data));
+      window.location.href = "/h/home";
+    }
+  }
+
+  function sendNotification(head: string, content: string) {
+    const notif: NotificationRaven = {
+      color: "red",
+      bg: "bg-red-100",
+      border: "border-red-500",
+      text: "text-red-900",
+      fill: "text-red-500",
+      type: NotificationType.alert,
+      duration: 5000,
+      head: head,
+      content: content,
+    };
+    let notifs = notifications.slice();
+    notifs.push(notif);
+    setNotifications(notifs);
+    setLoading(false);
+
+    //Wipe all of the text from the inputs
+    for (let i = 1; i <= 6; i++) {
+      const element: HTMLElement = document.getElementById(`S:${i}`);
+      if (element) {
+        element.value = "";
+      }
+    }
+  }
+
+  async function resendOTP() {
+    const act_id: number = Math.floor(Math.random() * 999999999);
+    const newUID: string = uID.split(":")[0] + ":" + act_id;
+    setLoading(true);
+    const res = await axios.post(backendURL + "/email/verify-email", {
+      username: newUID,
+      email: email,
+    });
+    const n_id: string = res.data.otp_object._id;
+    console.log(n_id);
+    setUID(newUID);
+    setId(n_id);
+    setLoading(false);
+
+    //Wipe all of the text from the inputs
+    for (let i = 1; i <= 6; i++) {
+      const element: HTMLElement = document.getElementById(`S:${i}`);
+      if (element) {
+        element.value = "";
+      }
+    }
   }
 
   return (
@@ -137,8 +210,12 @@ const Verify: React.FC = () => {
                 onChange={(e) => onOTPType(e.target.id, e.target.value)}
               />
             </div>
-
-            <br />
+            <span
+              className="font-ez cursor-pointer mt-1 mb-3"
+              onClick={() => resendOTP()}
+            >
+              resend otp
+            </span>
             {loading ? (
               <Loader size={0.6} />
             ) : (
@@ -159,6 +236,7 @@ const Verify: React.FC = () => {
         </div>
       </div>
       <div className="h-screen absolute w-screen z-1  background"></div>
+      <NotificationManager notifications={notifications} />
     </>
   );
 };
