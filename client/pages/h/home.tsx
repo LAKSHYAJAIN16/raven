@@ -17,13 +17,13 @@ const Home: React.FC = () => {
     setIsDebate(false);
     setIsDiscover(false);
     setIsPrivacy(false);
-    setIsCreate(false);
     func(true);
   }
-  
+
   return (
     <>
       <div className="h-screen absolute w-screen z-20">
+        {isCreate && <CreateIsland />}
         <div className="w-screen">
           {/* Actual thing */}
           <div className="sticky m-auto w-screen">
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
               </button>
               <button>
                 <img
-                  onClick={() => setState(setIsCreate)}
+                  onClick={() => setIsCreate(true)}
                   src="/plus.png"
                   className={`${
                     isCreate === false && "grayscale"
@@ -101,21 +101,13 @@ const Home: React.FC = () => {
                 privacy
               </span>
             )}
-
-            {isCreate && (
-              <span className="font-extrabold text-transparent text-6xl bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600 font-ez">
-                create
-              </span>
-            )}
           </div>
-
-          <div>
-            {isCreate && <CreateIsland />}
-            {isDebate && <DebateIsland />}
-            {isDiscover && <DiscoverIsland />}
-            {isPrivacy && <PrivacyIsland />}
-            {isHome && <HomeIsland />}
-          </div>
+        </div>
+        <div>
+          {isDebate && <DebateIsland />}
+          {isDiscover && <DiscoverIsland />}
+          {isPrivacy && <PrivacyIsland />}
+          {isHome && <HomeIsland />}
         </div>
       </div>
       <div className="h-screen absolute w-screen z-1  background"></div>

@@ -30,6 +30,40 @@
   filter: grayscale(200%);
 }
 
+.curved {
+  border-radius: 50%;
+}
+
+.fade-modal-in {
+  animation: modal-in 300 ease-out;
+}
+
+.fade-modal-out {
+  animation: modal-out 200 ease-in;
+}
+
+.box[contenteditable]:empty::before {
+  content: "wassup?";
+  color: rgb(202, 202, 202);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 100;
+  }
+}
+
+@keyframes modal-out {
+  from {
+    opacity: 100;
+  }
+  to {
+    opacity: 0;
+  }
+}
 @keyframes spin {
   0% {
     transform: rotate(0deg);

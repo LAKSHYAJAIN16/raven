@@ -1,7 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function HomeIsland() {
-  return (
-    <div>HomeIsland</div>
-  )
+  return <>{/* first, filters */}</>;
 }
