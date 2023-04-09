@@ -20,10 +20,20 @@ const Home: React.FC = () => {
     func(true);
   }
 
+  function islandCallback(type: string) {
+    switch (type) {
+      case "create":
+        setIsCreate(false);
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       <div className="h-screen absolute w-screen z-20">
-        {isCreate && <CreateIsland />}
+        {isCreate && <CreateIsland callback={islandCallback} />}
         <div className="w-screen">
           {/* Actual thing */}
           <div className="sticky m-auto w-screen">
