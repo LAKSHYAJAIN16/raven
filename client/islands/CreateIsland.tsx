@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import UserData from "../components/UserData";
 import axios from "axios";
 import dynamic from "next/dynamic";
+import { backendURL } from "../settings";
 import NotificationManager, {
   NotificationRaven,
   NotificationType,
@@ -135,10 +136,54 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
     setVideo([]);
   }
 
-  function sendData() {
-    console.log(images);
+  async function sendData() {
+    console.log("hi!");
     const text: string = document.getElementById("text")?.innerHTML || "";
-    console.log(text);
+
+    // Some formatting $#!7 :\
+    if(images.length > 0){
+      setVideo([]);
+    }
+    if(video.length > 0){
+      setImages([[]]);
+    }
+
+    //First, find out type
+    const type = returnType();
+    let newImages = [];
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i];
+      newImages.push(image[0]);
+    }
+
+    const payload = {
+      user: {
+        name: UserData.getData("username"),
+        id: UserData.getData("_id"),
+        pfpic: pfpic,
+      },
+      text: text,
+      type: type,
+      images: newImages,
+      videos: video[0],
+      richText: blogRT,
+      md: "",
+      news: {
+        topic: "nan",
+        desc: "nan",
+      },
+    };
+
+    //Send to axios backend
+    const res = await axios.post(backendURL + "/create/post", payload);
+    console.log(res);
+  }
+
+  function returnType() {
+    if (images.length !== 0) return 1;
+    if (video.length !== 0) return 2;
+    if (newsMD) return 3;
+    return 0;
   }
 
   return (
@@ -215,15 +260,19 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
                             )}
                           </div>
                         )}
-                        <p>
-                          <span
-                            className="mt-0 font-ez text-sm text-gray-700 outline-none focus:outline-gray-400 rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
-                            placeholder="wassup?"
-                            role="textbox"
-                            contentEditable
-                            id="text"
-                          ></span>
-                        </p>
+
+                        {/* Text Input */}
+                        {mode !== "news-2" && (
+                          <p>
+                            <span
+                              className="mt-0 font-ez text-sm text-gray-700 outline-none focus:outline-gray-400 rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
+                              placeholder="wassup?"
+                              role="textbox"
+                              contentEditable
+                              id="text"
+                            ></span>
+                          </p>
+                        )}
 
                         {mode === "blog" && (
                           <>

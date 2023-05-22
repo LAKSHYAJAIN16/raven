@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const verifyEmail = require("./routes/email/verify-email");
 const createUser = require("./routes/create/user");
+const createPost = require("./routes/create/post");
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,10 @@ app.get("/", (req, res) => {
 
 app.post("/create/user", async (req, res) => {
   await createUser(req, res);
+});
+
+app.post("/create/post", async (req, res) => {
+  await createPost(req, res);
 });
 
 app.post("/email/verify-email", async (req, res) => {

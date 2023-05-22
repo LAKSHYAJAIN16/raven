@@ -36,81 +36,84 @@ const Home: React.FC = () => {
         {isCreate && <CreateIsland callback={islandCallback} />}
         <div className="w-screen">
           {/* Actual thing */}
-          <div className="sticky m-auto w-screen">
-            <div className="flex justify-center mt-3 font-ez">
-              <button>
-                <img
-                  onClick={() => setState(setIsHome)}
-                  src="/home.png"
-                  className={`${
-                    isHome === false && "grayscale"
-                  } h-10 w-10 mr-2 ml-2 `}
-                ></img>
-              </button>
-              <button>
-                <img
-                  onClick={() => setState(setIsDiscover)}
-                  src="/discover.png"
-                  className={`${
-                    isDiscover === false && "grayscale"
-                  } h-10 w-10 mr-2 ml-2 `}
-                ></img>
-              </button>
-              <button>
-                <img
-                  onClick={() => setIsCreate(true)}
-                  src="/plus.png"
-                  className={`${
-                    isCreate === false && "grayscale"
-                  } h-7 w-7 mr-2 ml-2 `}
-                ></img>
-              </button>
-              <button>
-                <img
-                  onClick={() => setState(setIsDebate)}
-                  src="/debate.png"
-                  className={`${
-                    isDebate === false && "grayscale"
-                  } h-10 w-10 mr-2 ml-2 `}
-                ></img>
-              </button>
-              <button>
-                <img
-                  onClick={() => setState(setIsPrivacy)}
-                  src="/privacy.png"
-                  className={`${
-                    isPrivacy === false && "grayscale"
-                  } h-10 w-10 mr-2 ml-2 `}
-                ></img>
-              </button>
-            </div>
-          </div>
 
-          <div className="mt-4 text-center ">
+          <div className="mt-4 text-center text-8xl">
             {/* Titles */}
             {isHome && (
-              <span className="font-extrabold text-transparent text-6xl bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600 font-ez">
+              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600 font-ez">
                 home
               </span>
             )}
 
             {isDiscover && (
-              <span className="font-extrabold text-transparent text-6xl bg-clip-text bg-gradient-to-r from-orange-400 to-red-600 font-ez">
+              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-600 font-ez">
                 discover
               </span>
             )}
 
             {isDebate && (
-              <span className="font-extrabold text-transparent text-6xl bg-clip-text bg-gradient-to-r from-lime-400 to-green-600 font-ez">
+              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-600 font-ez">
                 debate
               </span>
             )}
 
             {isPrivacy && (
-              <span className="font-extrabold text-transparent text-6xl bg-clip-text bg-gradient-to-r from-gray-400 to-black font-ez">
+              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-black font-ez">
                 privacy
               </span>
             )}
+          </div>
+
+          <div className="fixed bottom-10">
+            <div className="m-auto w-screen scale-110 z-50">
+              <div className="flex justify-center mt-3 font-ez">
+                <button>
+                  <img
+                    onClick={() => setState(setIsHome)}
+                    src="/home.png"
+                    className={`${
+                      isHome === false && "grayscale"
+                    } h-10 w-10 mr-2 ml-2 `}
+                  ></img>
+                </button>
+                <button>
+                  <img
+                    onClick={() => setState(setIsDiscover)}
+                    src="/discover.png"
+                    className={`${
+                      isDiscover === false && "grayscale"
+                    } h-10 w-10 mr-2 ml-2 `}
+                  ></img>
+                </button>
+                <button>
+                  <img
+                    onClick={() => setIsCreate(true)}
+                    src="/plus.png"
+                    className={`${
+                      isCreate === false && "grayscale"
+                    } h-7 w-7 mr-2 ml-2 `}
+                  ></img>
+                </button>
+                <button>
+                  <img
+                    onClick={() => setState(setIsDebate)}
+                    src="/debate.png"
+                    className={`${
+                      isDebate === false && "grayscale"
+                    } h-10 w-10 mr-2 ml-2 `}
+                  ></img>
+                </button>
+                <button>
+                  <img
+                    onClick={() => setState(setIsPrivacy)}
+                    src="/privacy.png"
+                    className={`${
+                      isPrivacy === false && "grayscale"
+                    } h-10 w-10 mr-2 ml-2 `}
+                  ></img>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div>

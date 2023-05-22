@@ -19,7 +19,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-draft-wysiwyg": "^1.15.0",
+    "react-drag-reorder": "^1.2.0",
     "react-query": "^3.39.3",
+    "react-reorder": "^3.0.0-alpha.7",
     "snapsvg": "^0.5.1",
     "svg-morpher": "^1.0.7",
     "typescript": "5.0.3"
