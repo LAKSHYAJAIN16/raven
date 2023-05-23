@@ -12,6 +12,7 @@ const Editor = dynamic<EditorProps>(
 export const RTEditor: FC = () => {
   const [expandPlus, setExpandPlus] = useState<boolean>(false);
   const [lines, setLines] = useState<Line[]>([]);
+  const [render, setRender] = useState<boolean>(true);
   const [posBuffers, setPosBuffers] = useState<LinePosition[]>([]);
 
   function createLine(type: LineType) {
@@ -133,10 +134,38 @@ export const RTEditor: FC = () => {
     setPosBuffers(nLines);
   }
 
-  function reorderLines(pageY: number, line: Line, index: number) {
+  function megaReorderAndUpdate(
+    pageY: number,
+    index: number,
+    text: string,
+    id: string
+  ) {
+    //Text
+    let nLines: Line[] = lines.map((x) => x);
+    for (let i = 0; i < nLines.length; i++) {
+      if (nLines[i].id !== id) {
+        switch (nLines[i].type) {
+          case LineType.h1 || LineType.h2 || LineType.h3:
+            nLines[i].heading.text = document.getElementById(
+              `T:${nLines[i].id}`
+            )?.innerHTML;
+          // console.log(nLines[i].heading?.text);
+          default:
+            break;
+        }
+      } else {
+        switch (nLines[i].type) {
+          case LineType.h1 || LineType.h2 || LineType.h3:
+            nLines[i].heading.text = text;
+          // console.log(nLines[i].heading?.text);
+          default:
+            break;
+        }
+      }
+    }
+
     // go by ascending order and see if we can insert it
     let nLinePoses: LinePosition[] = posBuffers.map((x) => x);
-    let nLines: Line[] = lines.map((x) => x);
 
     for (let i = nLinePoses.length - 1; i > -1; i--) {
       const pos: number = nLinePoses[i].position;
@@ -155,36 +184,54 @@ export const RTEditor: FC = () => {
     setLines(nLines);
   }
 
-  function updateTextItem(text: string, id: string) {
-    //Duplicate and remove
-    let nLines: Line[] = lines.map((x) => x);
-    let act_lines: Line[] = [];
-    for (let i = 0; i < nLines.length; i++) {
-      const line = nLines[i];
-      if (line.id === id) {
-        switch (act_lines[i].type) {
-          case LineType.h1 || LineType.h2 || LineType.h3:
-            act_lines[i].heading.text = text;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
   return (
     <>
       <div className="">
         {/* Actual Lines */}
         <div className="">
           {lines.map((e: Line, index: number) => (
-            <RTElement
-              e={e}
-              idx={index}
-              delFun={deleteItem}
-              posFun={registerPosition}
-              reorderFun={reorderLines}
-            />
+            <>
+              {render && (
+                <>
+                  {e.type === LineType.h1 && (
+                    <RTHeading
+                      e={e}
+                      idx={index}
+                      delFun={deleteItem}
+                      posFun={registerPosition}
+                      megaTextAndReorder={megaReorderAndUpdate}
+                    />
+                  )}
+                  {e.type === LineType.h2 && (
+                    <RTHeading
+                      e={e}
+                      idx={index}
+                      delFun={deleteItem}
+                      posFun={registerPosition}
+                      megaTextAndReorder={megaReorderAndUpdate}
+                    />
+                  )}
+                  {e.type === LineType.h3 && (
+                    <RTHeading
+                      e={e}
+                      idx={index}
+                      delFun={deleteItem}
+                      posFun={registerPosition}
+                      megaTextAndReorder={megaReorderAndUpdate}
+                    />
+                  )}
+                  {e.type === LineType.paragraph && (
+                    <RTPara
+                      e={e}
+                      idx={index}
+                      delFun={deleteItem}
+                      posFun={registerPosition}
+                      megaTextAndReorder={megaReorderAndUpdate}
+                    />
+                  )}
+                </>
+              )}
+            </>
           ))}
         </div>
 
@@ -267,92 +314,245 @@ export const RTEditor: FC = () => {
           )}
         </div>
       </div>
-
       <br />
     </>
   );
 };
 
-export const RTElement: FC<RTElementProps> = ({
+export const RTHeading: FC<RTElementProps> = ({
   e,
   delFun,
   posFun,
-  reorderFun,
   idx,
+  megaTextAndReorder,
 }) => {
-  const [isDragging, setIsDragging] = useState<boolean>(false);
   const client = useRef<HTMLDivElement>(null);
 
   const onDrag = (event: DragEvent<HTMLImageElement>) => {
-    // Get Delta
-    reorderFun(event.pageY, e, idx);
+    // Get Text
+    const text: string = document.getElementById(`T:${e.id}`).innerHTML;
+    e.heading.text = text;
+    // console.log(text);
+
+    // Call for reorder
+    megaTextAndReorder(event.pageY, idx, text, e.id);
   };
 
   const del = () => {
     delFun(e.id);
   };
 
-  const updateHead = () => {
-    console.log(document.getElementById("text"));
-    const text: string = document.getElementById("text").innerHTML;
-    console.log(text);
-  };
-
   useEffect(() => {
+    document.getElementById(`T:${e.id}`).innerHTML = e.heading.text;
     const offset: number = getOffset(document.getElementById(`L:${e.id}`)).top;
     console.log(`Number : ${idx} has rendered`);
     posFun(offset, e);
-  }, []);
+  }, [e.heading.text]);
+
+  return (
+    <>
+      <div className="flex items-center mb-3" ref={client} id={`L:${e.id}`}>
+        <Image
+          alt="lol"
+          src="/drag.png"
+          width={15}
+          height={15}
+          className="cursor-move transition-all hover:scale-125 mr-3"
+          onDragEnd={(e) => onDrag(e)}
+        />
+        <Image
+          alt="lol"
+          src="/delete.png"
+          width={15}
+          height={15}
+          onClick={() => del()}
+          className="cursor-pointer transition-all hover:scale-125 mr-3"
+        />
+
+        {/* Type Wise */}
+        {e.type === LineType.h1 && (
+          <span
+            className="mt-0 text-4xl font-extrabold outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
+            role="textbox"
+            contentEditable="true"
+            id={`T:${e.id}`}
+          ></span>
+        )}
+        {e.type === LineType.h2 && (
+          <span
+            className="mt-0 text-2xl outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
+            role="textbox"
+            contentEditable="true"
+            id={`T:${e.id}`}
+          ></span>
+        )}
+        {e.type === LineType.h3 && (
+          <span
+            className="mt-0 text-lg outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
+            role="textbox"
+            contentEditable="true"
+            id={`T:${e.id}`}
+          ></span>
+        )}
+      </div>
+    </>
+  );
+};
+
+export const RTPara: FC<RTElementProps> = ({
+  e,
+  delFun,
+  posFun,
+  idx,
+  megaTextAndReorder,
+}) => {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [renderMenu, setRenderMenu] = useState(false);
+  const [isBold, setIsBold] = useState<boolean>(false);
+  const [isItalic, setIsItalic] = useState<boolean>(false);
+  const [isStrikeThrough, setIsStrikeThrough] = useState<boolean>(false);
+
+  const onDrag = (event: DragEvent<HTMLImageElement>) => {
+    // Get Text
+    const text: string = document.getElementById(`T:${e.id}`).innerHTML;
+    // console.log(text);
+
+    // Call for reorder
+    megaTextAndReorder(event.pageY, idx, text, e.id);
+  };
+
+  const del = () => {
+    delFun(e.id);
+  };
+
+  const registerEntities = (
+    isBold: boolean,
+    isItalic: boolean,
+    isStrikeThrough: boolean
+  ) => {
+    // Clone!
+    let nEntities: Entity[] = entities.map((x) => x);
+
+    // Get Raw Text
+    const text: string = document.getElementById(`P:${e.id}`)?.innerText || "";
+
+    // Add our new entity, looking at our options
+    const nText: string = removePrevText(nEntities, text);
+
+    const nEntity: Entity = {
+      isBold: isBold,
+      isItalic: isItalic,
+      isStrikeThrough: isStrikeThrough,
+      text: nText,
+      id: randomString(10),
+    };
+    nEntities.push(nEntity);
+    setEntities(nEntities);
+
+    return entities;
+  };
+
+  const makeBold = () => {
+    setIsBold(true);
+    const nEntities: Entity[] = registerEntities(
+      true,
+      isItalic,
+      isStrikeThrough
+    );
+    console.log(nEntities);
+  };
+
+  function removePrevText(entities: Entity[], text: string) {
+    // Create this kind of text object, where we compile our previous $#!7
+    let mega_text: string = "";
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      mega_text += entity.text;
+    }
+    return text.replace(mega_text, "");
+  }
+
+  useEffect(() => {
+    // document.getElementById(`T:${e.id}`).innerHTML = e.heading.text;
+    const offset: number = getOffset(document.getElementById(`L:${e.id}`)).top;
+    console.log(`Number : ${idx} has rendered`);
+    posFun(offset, e);
+  }, [e.para?.entities]);
 
   return (
     <div
-      className="flex items-center mb-3"
-      ref={client}
-      id={`L:${e.id}`}
-      onKeyDown={(e) => updateHead()}
+      className="flex flex-col"
+      onFocus={() => setRenderMenu(true)}
+      // onBlur={() => setRenderMenu(false)}
     >
-      <Image
-        alt="lol"
-        src="/drag.png"
-        width={15}
-        height={15}
-        className="cursor-move transition-all hover:scale-125 mr-3"
-        onDragEnd={(e) => onDrag(e)}
-      />
-      <Image
-        alt="lol"
-        src="/delete.png"
-        width={15}
-        height={15}
-        onClick={() => del()}
-        className="cursor-pointer transition-all hover:scale-125 mr-3"
-      />
+      {renderMenu && (
+        <div className="flex justify-center">
+          <Image
+            alt="lol"
+            src="/bold-button.png"
+            width={20}
+            height={20}
+            className="cursor-pointer transition-all hover:scale-125 mr-1"
+            onClick={() => makeBold()}
+          />
 
-      {/* Type Wise */}
-      {e.type === LineType.h1 && (
-        <span
-          className="mt-0 text-4xl font-extrabold outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
-          role="textbox"
-          contentEditable="true"
-          id="text"
-        ></span>
+          <Image
+            alt="lol"
+            src="/italic-button.png"
+            width={20}
+            height={20}
+            className="cursor-pointer transition-all hover:scale-125 mr-1"
+          />
+
+          <Image
+            alt="lol"
+            src="/strikethrough.png"
+            width={20}
+            height={20}
+            className="cursor-pointer transition-all hover:scale-125 mr-1"
+          />
+        </div>
       )}
-      {e.type === LineType.h2 && (
-        <span
-          className="mt-0 text-2xl outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
-          role="textbox"
-          contentEditable="true"
-          id="text"
-        ></span>
-      )}
-      {e.type === LineType.h3 && (
-        <span
-          className="mt-0 text-lg outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
-          role="textbox"
-          contentEditable="true"
-          id="text"
-        ></span>
-      )}
+
+      <div className="flex items-center mb-3" id={`L:${e.id}`}>
+        <Image
+          alt="lol"
+          src="/drag.png"
+          width={15}
+          height={15}
+          className="cursor-move transition-all hover:scale-125 mr-3"
+          onDragEnd={(e) => onDrag(e)}
+        />
+        <Image
+          alt="lol"
+          src="/delete.png"
+          width={15}
+          height={15}
+          onClick={() => del()}
+          className="cursor-pointer transition-all hover:scale-125 mr-3"
+        />
+
+        {/* {entities.map((f: Entity, idx: number) => (
+          <>
+            <textarea
+              className="mt-0 text-xl font-thin outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 resize-none w-full overflow-hidden box"
+              // contentEditable="true"
+              defaultValue={f.text}
+              id={`ENT:${e.id}:${f.id}`}
+            ></textarea>
+          </>
+        ))} */}
+
+        <div className="flex">
+          {/* Our Main Input */}
+          <textarea
+            className="mt-0 text-xl font-thin outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
+            // contentEditable="true"
+
+            id={`ENT:${e.id}:MAIN`}
+          ></textarea>
+        </div>
+      </div>
     </div>
   );
 };
@@ -372,7 +572,7 @@ interface RTElementProps {
   e: Line;
   delFun: Function;
   posFun: Function;
-  reorderFun: Function;
+  megaTextAndReorder: Function;
   idx: number;
 }
 
@@ -406,7 +606,10 @@ interface Heading {
 
 interface Entity {
   text: string;
-  type: EntityType;
+  isBold: boolean;
+  isItalic: boolean;
+  isStrikeThrough: boolean;
+  id: string;
 }
 
 interface Picture {
@@ -426,14 +629,6 @@ enum LineType {
   image,
   url,
   blockquote,
-}
-
-enum EntityType {
-  regular,
-  bold,
-  italic,
-  underline,
-  strikethrough,
 }
 
 enum HeadingType {
