@@ -236,7 +236,7 @@ export const RTEditor: FC = () => {
         </div>
 
         {/* Plus */}
-        <div className="flex justify-center items-center flex-col">
+        <div className="flex justify-center items-center flex-col z-10">
           <Image
             onClick={() => setExpandPlus(!expandPlus)}
             src="/pluss.png"
@@ -434,7 +434,8 @@ export const RTPara: FC<RTElementProps> = ({
     let nEntities: Entity[] = entities.map((x) => x);
 
     // Get Raw Text
-    const text: string = document.getElementById(`P:${e.id}`)?.innerText || "";
+    const text: string =
+      document.getElementById(`ENT:${e.id}:MAIN`)?.value || "";
 
     // Add our new entity, looking at our options
     const nText: string = removePrevText(nEntities, text);
@@ -460,6 +461,12 @@ export const RTPara: FC<RTElementProps> = ({
       isStrikeThrough
     );
     console.log(nEntities);
+  };
+
+  const send = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    document.getElementById("ENT:OUR_BOI").innerHTML = `<b>${e.target.value}</b>`;
   };
 
   function removePrevText(entities: Entity[], text: string) {
@@ -532,25 +539,15 @@ export const RTPara: FC<RTElementProps> = ({
           className="cursor-pointer transition-all hover:scale-125 mr-3"
         />
 
-        {/* {entities.map((f: Entity, idx: number) => (
-          <>
-            <textarea
-              className="mt-0 text-xl font-thin outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 resize-none w-full overflow-hidden box"
-              // contentEditable="true"
-              defaultValue={f.text}
-              id={`ENT:${e.id}:${f.id}`}
-            ></textarea>
-          </>
-        ))} */}
-
-        <div className="flex">
-          {/* Our Main Input */}
-          <textarea
-            className="mt-0 text-xl font-thin outline-none focus:outline-none rounded-2xl pl-3 pr-3 pt-1 pb-1 block resize-none sm:w-[90%] w-full overflow-hidden box"
-            // contentEditable="true"
-
+        {/* Our Main Input */}
+        <div className="flex w-full">
+          <input
+            className="mt-0 text-md outline-none focus:outline-none rounded-2xl pr-3 pt-1 pb-1 fixed z-0 resize-none sm:w-[90%] w-full overflow-hidden box"
             id={`ENT:${e.id}:MAIN`}
-          ></textarea>
+            onChange={(e) => send(e)}
+          ></input>
+          <p id="ENT:OUR_BOI" className="mt-10 text-lg">
+          </p>
         </div>
       </div>
     </div>
