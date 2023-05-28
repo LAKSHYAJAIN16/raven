@@ -410,7 +410,6 @@ export const RTPara: FC<RTElementProps> = ({
   const [renderMenu, setRenderMenu] = useState(false);
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
-  const [isStrikeThrough, setIsStrikeThrough] = useState<boolean>(false);
 
   const onDrag = (event: DragEvent<HTMLImageElement>) => {
     // Get Text
@@ -425,58 +424,197 @@ export const RTPara: FC<RTElementProps> = ({
     delFun(e.id);
   };
 
-  const registerEntities = (
-    isBold: boolean,
-    isItalic: boolean,
-    isStrikeThrough: boolean
-  ) => {
-    // Clone!
-    let nEntities: Entity[] = entities.map((x) => x);
-
-    // Get Raw Text
-    const text: string =
-      document.getElementById(`ENT:${e.id}:MAIN`)?.value || "";
-
-    // Add our new entity, looking at our options
-    const nText: string = removePrevText(nEntities, text);
-
-    const nEntity: Entity = {
-      isBold: isBold,
-      isItalic: isItalic,
-      isStrikeThrough: isStrikeThrough,
-      text: nText,
-      id: randomString(10),
-    };
-    nEntities.push(nEntity);
-    setEntities(nEntities);
-
-    return entities;
+  const boldFn = () => {
+    console.log(getSelectedText());
+    switch (isBold) {
+      case false:
+        setIsBold(true);
+        break;
+      case true:
+        setIsBold(false);
+        break;
+    }
   };
 
-  const makeBold = () => {
-    setIsBold(true);
-    const nEntities: Entity[] = registerEntities(
-      true,
-      isItalic,
-      isStrikeThrough
-    );
-    console.log(nEntities);
+  const italicFn = () => {
+    switch (isItalic) {
+      case false:
+        setIsItalic(true);
+        break;
+      case true:
+        setIsItalic(false);
+        break;
+    }
   };
 
   const send = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
-    document.getElementById("ENT:OUR_BOI").innerHTML = `<b>${e.target.value}</b>`;
+    let sEntities: Entity[] = entities.map((x) => x);
+    let nEntities: Entity[] = checkForDeletes(sEntities, e.target.value);
+
+    // IF THIS WAS A DELETE OPERATION, DO NOT ADD DELTA
+    if (textWasShortened(entities, e.target.value) === true) {
+      // console.log(nEntities);
+      setEntities(nEntities);
+
+      document.getElementById(
+        "ENT:OUR_BOI"
+      ).innerHTML = `${convertEntitiesToHTML(nEntities)}`;
+      return;
+    } else {
+      // get deltas
+      const deltas: EntityDelta[] = calculatePrevTextDelta(
+        sEntities,
+        e.target.value
+      );
+
+      for (let i = 0; i < deltas.length; i++) {
+        const element = deltas[i];
+        sEntities.splice(element.index, 0, {
+          char: element.delta,
+          isBold: isBold,
+          isItalic: isItalic,
+          id: randomString(10),
+        });
+      }
+
+      //Get the
+      document.getElementById(
+        "ENT:OUR_BOI"
+      ).innerHTML = `${convertEntitiesToHTML(sEntities)}`;
+
+      setEntities(sEntities);
+    }
   };
 
-  function removePrevText(entities: Entity[], text: string) {
+  function calculatePrevTextDelta(entities: Entity[], text: string) {
+    // Create this kind of text object, where we compile our previous $#!7
+    // LEGACY CODE
+    // let mega_text: string = "";
+    // for (let i = 0; i < entities.length; i++) {
+    //   const entity = entities[i];
+    //   mega_text += entity.char;
+    // }
+    // return text.replace(mega_text, "");
+    let numericalDelta: number = Math.abs(textAndEntityDelta(entities, text));
+    let delta: EntityDelta[] = [];
+    for (let i = 0; i < text.length; i++) {
+      const entity: Entity = entities[i];
+      const t: string = text[i];
+      // check if the text is undefined
+      if (delta.length < numericalDelta) {
+        if (entity === undefined) {
+          delta.push({
+            delta: t,
+            index: i,
+          });
+        } else {
+          if (t != entity.char) {
+            delta.push({
+              delta: t,
+              index: i,
+            });
+            console.log(t);
+          }
+        }
+      }
+    }
+
+    console.log(delta);
+
+    return delta;
+  }
+
+  function textWasShortened(entities: Entity[], text: string) {
     // Create this kind of text object, where we compile our previous $#!7
     let mega_text: string = "";
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
-      mega_text += entity.text;
+      mega_text += entity.char;
     }
-    return text.replace(mega_text, "");
+    if (mega_text.length > text.length) {
+      // console.log("was shortened");
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function textAndEntityDelta(entities: Entity[], text: string) {
+    // Create this kind of text object, where we compile our previous $#!7
+    let mega_text: string = "";
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      mega_text += entity.char;
+    }
+    return mega_text.length - text.length;
+  }
+
+  function checkForDeletes(entities: Entity[], text: string) {
+    // Assemble text by entities
+    let returnEntities: Entity[] = [];
+    const delta: number = textAndEntityDelta(entities, text);
+
+    // find difference between our entity text and the actual text
+    for (let i = 0; i < entities.length; i++) {
+      const entity: string = entities[i].char;
+      const letter: string = text[i];
+
+      if (returnEntities.length < delta) {
+        if (letter === undefined) {
+          // Last letter was deleted, now deleting ${entity}
+          returnEntities.push(entities[i]);
+        } else {
+          if (entity != letter) {
+            // Program has found that ${entity} does not fulfil ${letter}
+            returnEntities.push(entities[i]);
+          }
+        }
+      }
+    }
+
+    console.log(returnEntities);
+    // now, a bunch of random javascript magic
+    const resultArray = entities.filter(
+      (x) => !returnEntities.find((x2) => x.id === x2.id)
+    );
+    return resultArray;
+  }
+
+  function getSelectedText(){
+      var text : string= "";
+      var activeEl = document.activeElement;
+      var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+      if (
+        (activeElTagName == "textarea") || (activeElTagName == "input" &&
+        /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+        (typeof activeEl.selectionStart == "number")
+      ) {
+          text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
+      } else if (window.getSelection) {
+          text = window.getSelection().toString();
+      }
+      return text;
+  }
+
+  function convertEntitiesToHTML(entities: Entity[]) {
+    let output: string = "";
+    // Loop through each entity
+    for (let i = 0; i < entities.length; i++) {
+      const element: Entity = entities[i];
+      let prefix: string = `<span>`;
+      let suffix: string = `</span>`;
+      if (element.isBold) {
+        prefix += "<b>";
+        suffix += "</b>";
+      }
+      if (element.isItalic) {
+        prefix += "<i>";
+        suffix += "</i>";
+      }
+      output += `${prefix}${element.char}${suffix}`;
+    }
+    return output;
   }
 
   useEffect(() => {
@@ -496,27 +634,24 @@ export const RTPara: FC<RTElementProps> = ({
         <div className="flex justify-center">
           <Image
             alt="lol"
-            src="/bold-button.png"
+            src={`${isBold ? "/bold-i-button.png" : "/bold-button.png"}`}
             width={20}
             height={20}
-            className="cursor-pointer transition-all hover:scale-125 mr-1"
-            onClick={() => makeBold()}
+            className={`cursor-pointer transition-all hover:scale-125 mr-1 ${
+              isBold && "bg-black rounded-md"
+            }`}
+            onClick={() => boldFn()}
           />
 
           <Image
             alt="lol"
-            src="/italic-button.png"
+            src={`${isItalic ? "/italic-i-button.png" : "/italic-button.png"}`}
             width={20}
             height={20}
-            className="cursor-pointer transition-all hover:scale-125 mr-1"
-          />
-
-          <Image
-            alt="lol"
-            src="/strikethrough.png"
-            width={20}
-            height={20}
-            className="cursor-pointer transition-all hover:scale-125 mr-1"
+            className={`cursor-pointer transition-all hover:scale-125 mr-1 ${
+              isItalic && "bg-black rounded-md"
+            }`}
+            onClick={() => italicFn()}
           />
         </div>
       )}
@@ -542,12 +677,11 @@ export const RTPara: FC<RTElementProps> = ({
         {/* Our Main Input */}
         <div className="flex w-full">
           <input
-            className="mt-0 text-md outline-none focus:outline-none rounded-2xl pr-3 pt-1 pb-1 fixed z-0 resize-none sm:w-[90%] w-full overflow-hidden box"
+            className="mt-0 text-md outline-none focus:outline-none rounded-2xl pr-3 pt-1 pb-1 fixed z-0 resize-y sm:w-[50vw] w-[80%] overflow-hidden box break-words"
             id={`ENT:${e.id}:MAIN`}
             onChange={(e) => send(e)}
           ></input>
-          <p id="ENT:OUR_BOI" className="mt-10 text-lg">
-          </p>
+          <p id="ENT:OUR_BOI" className="mt-10 text-lg z-30"></p>
         </div>
       </div>
     </div>
@@ -602,11 +736,15 @@ interface Heading {
 }
 
 interface Entity {
-  text: string;
+  char: string;
   isBold: boolean;
   isItalic: boolean;
-  isStrikeThrough: boolean;
   id: string;
+}
+
+interface EntityDelta {
+  index: number;
+  delta: string;
 }
 
 interface Picture {
