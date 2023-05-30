@@ -149,7 +149,15 @@ export const RTEditor: FC = () => {
             nLines[i].heading.text = document.getElementById(
               `T:${nLines[i].id}`
             )?.innerHTML;
-          // console.log(nLines[i].heading?.text);
+          case LineType.paragraph:
+            // loop through all of the spans in our paragraph element, and give them a unique element
+            const spans = document.getElementById(
+              `ENT:OUR_BOI:${nLines[i].id}`
+            )?.children;
+            const lines: Entity[] = [];
+            for (let i = 0; i < spans.length; i++) {
+              const span = spans[i];
+            }
           default:
             break;
         }
@@ -157,6 +165,9 @@ export const RTEditor: FC = () => {
         switch (nLines[i].type) {
           case LineType.h1 || LineType.h2 || LineType.h3:
             nLines[i].heading.text = text;
+
+          case LineType.paragraph:
+            nLines[i].para.entities = JSON.parse(text);
           // console.log(nLines[i].heading?.text);
           default:
             break;
@@ -222,6 +233,15 @@ export const RTEditor: FC = () => {
                   )}
                   {e.type === LineType.paragraph && (
                     <RTPara
+                      e={e}
+                      idx={index}
+                      delFun={deleteItem}
+                      posFun={registerPosition}
+                      megaTextAndReorder={megaReorderAndUpdate}
+                    />
+                  )}
+                  {e.type === LineType.image && (
+                    <RTImage
                       e={e}
                       idx={index}
                       delFun={deleteItem}
@@ -352,14 +372,14 @@ export const RTHeading: FC<RTElementProps> = ({
   return (
     <>
       <div className="flex items-center mb-3" ref={client} id={`L:${e.id}`}>
-        <Image
+        {/* <Image
           alt="lol"
           src="/drag.png"
           width={15}
           height={15}
           className="cursor-move transition-all hover:scale-125 mr-3"
           onDragEnd={(e) => onDrag(e)}
-        />
+        /> */}
         <Image
           alt="lol"
           src="/delete.png"
@@ -413,7 +433,7 @@ export const RTPara: FC<RTElementProps> = ({
 
   const onDrag = (event: DragEvent<HTMLImageElement>) => {
     // Get Text
-    const text: string = document.getElementById(`T:${e.id}`).innerHTML;
+    const text: string = JSON.stringify(entities);
     // console.log(text);
 
     // Call for reorder
@@ -447,25 +467,25 @@ export const RTPara: FC<RTElementProps> = ({
     }
   };
 
-  const send = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
+  const send = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    event.preventDefault();
     let sEntities: Entity[] = entities.map((x) => x);
-    let nEntities: Entity[] = checkForDeletes(sEntities, e.target.value);
+    let nEntities: Entity[] = checkForDeletes(sEntities, event.target.value);
 
     // IF THIS WAS A DELETE OPERATION, DO NOT ADD DELTA
-    if (textWasShortened(entities, e.target.value) === true) {
+    if (textWasShortened(entities, event.target.value) === true) {
       // console.log(nEntities);
       setEntities(nEntities);
 
       document.getElementById(
-        "ENT:OUR_BOI"
+        `ENT:OUR_BOI:${e.id}`
       ).innerHTML = `${convertEntitiesToHTML(nEntities)}`;
       return;
     } else {
       // get deltas
       const deltas: EntityDelta[] = calculatePrevTextDelta(
         sEntities,
-        e.target.value
+        event.target.value
       );
 
       for (let i = 0; i < deltas.length; i++) {
@@ -480,7 +500,7 @@ export const RTPara: FC<RTElementProps> = ({
 
       //Get the
       document.getElementById(
-        "ENT:OUR_BOI"
+        `ENT:OUR_BOI:${e.id}`
       ).innerHTML = `${convertEntitiesToHTML(sEntities)}`;
 
       setEntities(sEntities);
@@ -581,20 +601,24 @@ export const RTPara: FC<RTElementProps> = ({
     return resultArray;
   }
 
-  function getSelectedText(){
-      var text : string= "";
-      var activeEl = document.activeElement;
-      var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
-      if (
-        (activeElTagName == "textarea") || (activeElTagName == "input" &&
-        /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
-        (typeof activeEl.selectionStart == "number")
-      ) {
-          text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-      } else if (window.getSelection) {
-          text = window.getSelection().toString();
-      }
-      return text;
+  function getSelectedText() {
+    var text: string = "";
+    var activeEl = document.activeElement;
+    var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+    if (
+      activeElTagName == "textarea" ||
+      (activeElTagName == "input" &&
+        /^(?:text|search|password|tel|url)$/i.test(activeEl.type) &&
+        typeof activeEl.selectionStart == "number")
+    ) {
+      text = activeEl.value.slice(
+        activeEl.selectionStart,
+        activeEl.selectionEnd
+      );
+    } else if (window.getSelection) {
+      text = window.getSelection().toString();
+    }
+    return text;
   }
 
   function convertEntitiesToHTML(entities: Entity[]) {
@@ -617,11 +641,27 @@ export const RTPara: FC<RTElementProps> = ({
     return output;
   }
 
+  function convertEntitiesToString(entities: Entity[]) {
+    // Create this kind of text object, where we compile our previous $#!7
+    // LEGACY CODE
+    let mega_text: string = "";
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      mega_text += entity.char;
+    }
+    return mega_text;
+  }
+
   useEffect(() => {
     // document.getElementById(`T:${e.id}`).innerHTML = e.heading.text;
     const offset: number = getOffset(document.getElementById(`L:${e.id}`)).top;
     console.log(`Number : ${idx} has rendered`);
     posFun(offset, e);
+
+    document.getElementById(`ENT:OUR_BOI:${e.id}`).innerHTML =
+      convertEntitiesToHTML(e.para.entities);
+    document.getElementById(`ENT:${e.id}:MAIN`).defaultValue =
+      convertEntitiesToString(e.para.entities);
   }, [e.para?.entities]);
 
   return (
@@ -657,14 +697,14 @@ export const RTPara: FC<RTElementProps> = ({
       )}
 
       <div className="flex items-center mb-3" id={`L:${e.id}`}>
-        <Image
+        {/* <Image
           alt="lol"
           src="/drag.png"
           width={15}
           height={15}
           className="cursor-move transition-all hover:scale-125 mr-3"
           onDragEnd={(e) => onDrag(e)}
-        />
+        /> */}
         <Image
           alt="lol"
           src="/delete.png"
@@ -681,10 +721,69 @@ export const RTPara: FC<RTElementProps> = ({
             id={`ENT:${e.id}:MAIN`}
             onChange={(e) => send(e)}
           ></input>
-          <p id="ENT:OUR_BOI" className="mt-10 text-lg z-30"></p>
+          <p id={`ENT:OUR_BOI:${e.id}`} className="mt-10 text-lg z-30"></p>
         </div>
       </div>
     </div>
+  );
+};
+
+export const RTImage: FC<RTElementProps> = ({
+  e,
+  delFun,
+  posFun,
+  idx,
+  megaTextAndReorder,
+}) => {
+  const client = useRef<HTMLDivElement>(null);
+  const [imageState, setImageState] = useState<number>(0);
+
+  const onDrag = (event: DragEvent<HTMLImageElement>) => {
+    // Get Text
+    const text: string = document.getElementById(`T:${e.id}`).innerHTML;
+    e.heading.text = text;
+    // console.log(text);
+
+    // Call for reorder
+    megaTextAndReorder(event.pageY, idx, text, e.id);
+  };
+
+  const del = () => {
+    delFun(e.id);
+  };
+
+  useEffect(() => {
+    const offset: number = getOffset(document.getElementById(`L:${e.id}`)).top;
+    console.log(`Number : ${idx} has rendered`);
+    posFun(offset, e);
+  }, [e.image.url]);
+
+  return (
+    <>
+      <div className="flex items-center mb-3" ref={client} id={`L:${e.id}`}>
+        {/* <Image
+          alt="lol"
+          src="/drag.png"
+          width={15}
+          height={15}
+          className="cursor-move transition-all hover:scale-125 mr-3"
+          onDragEnd={(e) => onDrag(e)}
+        /> */}
+        <Image
+          alt="lol"
+          src="/delete.png"
+          width={15}
+          height={15}
+          onClick={() => del()}
+          className="cursor-pointer transition-all hover:scale-125 mr-3"
+        />
+        {imageState === 0 && (
+          <>
+            <button>Upload Image</button>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

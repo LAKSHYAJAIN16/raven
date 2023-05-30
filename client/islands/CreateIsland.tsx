@@ -318,7 +318,7 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
                         </span>
                       </span>
                       ,{" "}
-                      <span onClick={() => setMode("blog")}>
+                      {/* <span onClick={() => setMode("blog")}>
                         <span
                           className={`cursor-pointer font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-700 font-ez ${
                             mode === "blog" ? "text-black" : ""
@@ -327,7 +327,7 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
                           blog
                         </span>
                       </span>
-                      ,{" "}
+                      ,{" "} */}
                       <span onClick={() => setMode("video")}>
                         <span
                           className={`cursor-pointer font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-green-700 font-ez ${
@@ -337,8 +337,7 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
                           video
                         </span>
                       </span>
-                      ,{" "}
-                      <span onClick={() => setMode("news")}>
+                      {/* <span onClick={() => setMode("news")}>
                         <span
                           className={`cursor-pointer font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-700 font-ez ${
                             mode === "news" ? "text-black" : ""
@@ -356,7 +355,7 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
                         >
                           debate
                         </span>
-                      </span>
+                      </span> */}
                     </p>
                   </div>
 
