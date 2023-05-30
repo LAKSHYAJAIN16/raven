@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const verifyEmail = require("./routes/email/verify-email");
 const createUser = require("./routes/create/user");
 const createPost = require("./routes/create/post");
+const allPosts = require("./routes/get/allPosts");
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,10 @@ app.post("/create/post", async (req, res) => {
 
 app.post("/email/verify-email", async (req, res) => {
   await verifyEmail(req, res);
+});
+
+app.get("/get/posts", async (req, res) => {
+  await allPosts(req, res);
 });
 
 app.listen(port, () => {
