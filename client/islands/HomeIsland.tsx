@@ -195,6 +195,54 @@ export default function HomeIsland() {
     );
   };
 
+  const VidPost = ({ object }) => {
+    return (
+      <div className="flex flex-col border-2 border-black rounded-xl">
+        <div className="pl-3 pr-3 pt-2 pb-2 flex">
+          <div>
+            <img
+              src={object.userPfpic}
+              className="cursor-pointer flex mx-auto h-10 w-10 flex-shrink-0 items-center justify-center rounded-full"
+            />
+          </div>
+          <div className="flex flex-col max-w-xl">
+            <p className="font-ez ml-2 font-bold text-sm">
+              <span>{object.user} </span>
+              <span className="text-xs text-gray-500">
+                {moment(object.createdAt).fromNow()}
+              </span>
+            </p>
+            <span className="z-10 font-ez ml-2 font-bold text-[9px] text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-green-700">
+              video post
+            </span>
+
+            <video className="-z-10" controls>
+              <source src={object.videos[0]} type="video/mp4" />
+            </video>
+            <p
+              className="font-ez ml-2 text-lg"
+              dangerouslySetInnerHTML={{ __html: object.text }}
+            ></p>
+            <div className="ml-2 flex items-center mt-1">
+              <img
+                src={"/heart-red.png"}
+                className="w-5 h-5 cursor-pointer hover:scale-110 mr-1"
+              />
+              <img
+                src={"/fire.png"}
+                className="w-5 h-5 cursor-pointer hover:scale-110 mr-1 -mt-1"
+              />
+              <img
+                src={"/comment.png"}
+                className="w-5 h-5 cursor-pointer hover:scale-110 "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       {feed.length === 0 ? (
@@ -209,6 +257,7 @@ export default function HomeIsland() {
               <>
                 {e.type === 0 && <TextPost object={e} />}
                 {e.type === 1 && <ImgPost object={e} />}
+                {e.type === 2 && <VidPost object={e} />}
               </>
             ))}
           </div>
