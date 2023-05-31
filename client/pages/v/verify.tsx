@@ -6,8 +6,11 @@ import NotificationManager, {
   NotificationRaven,
   NotificationType,
 } from "../../components/NotificationManager";
+import * as IPFS from "ipfs-core";
+import { createCipher, createDecipher } from "crypto";
 
 const Verify: React.FC = () => {
+  const [uiState, setUiState] = useState<number>(1);
   const [id, setId] = useState<string>("");
   const [uID, setUID] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -68,7 +71,7 @@ const Verify: React.FC = () => {
     setLoading(true);
     let otp: string = "";
     for (let i = 1; i <= 6; i++) {
-      otp += document.getElementById(`S:${i}`)?.value;
+      otp += document.getElementById(`S:${i}`).value;
     }
 
     //Compile Payload
@@ -98,8 +101,42 @@ const Verify: React.FC = () => {
     } else if (res.data.code === 2) {
       //We're logged in boiz!
       localStorage.setItem("base", JSON.stringify(res.data.data));
-      window.location.href = "/h/home";
+
+      setUiState(1);
     }
+  }
+
+  async function ipfs() {
+    // get password
+    const password: string = document.getElementById("password").value;
+
+    // encrypt it
+    const algorithm = "aes256";
+    const cipher1 = createCipher(algorithm, password);
+    const password_encrypted =
+      cipher1.update(password, "utf8", "hex") + cipher1.final("hex");
+    // var decipher = createDecipher(algorithm, password);
+    // var decrypted =
+    //   decipher.update(encrypted, "hex", "utf8") + decipher.final("utf8");
+
+    // now, create the object for ipfs
+    const ipfs_object = {
+      userID: uID,
+      email: email,
+      data: [],
+      toc: new Date(Date.now()).toISOString(),
+    };
+    const str_obj = JSON.stringify(ipfs_object);
+
+    // now, encrypt our str_obj :L
+    const cipher2 = createCipher(algorithm, password_encrypted);
+    const ipfs_data_encrypted =
+      cipher2.update(str_obj, "utf8", "hex") + cipher2.final("hex");
+
+    // now send req to IPFS
+    const node = await IPFS.create({repo: 'ok' + Math.random()});
+    const results = await node.add(ipfs_data_encrypted);
+    console.log(results);
   }
 
   function sendNotification(head: string, content: string) {
@@ -156,83 +193,121 @@ const Verify: React.FC = () => {
       <div className="h-screen absolute w-screen z-20">
         <div className="flex h-screen w-screen">
           {/* Actual thing */}
-          <div className="m-auto flex flex-col items-center">
-            <h1 className="font-ez text-center text-7xl font-bold">verify</h1>
-            <h1 className="font-ez text-center text-2xl font-light">
-              we have sent a verification code to your email address
-            </h1>
+          {uiState === 0 ? (
+            <div className="m-auto flex flex-col items-center">
+              <h1 className="font-ez text-center text-7xl font-bold">verify</h1>
+              <h1 className="font-ez text-center text-2xl font-light">
+                we have sent a verification code to your email address
+              </h1>
 
-            <div
-              id="otp"
-              onPaste={(e) => copyCutCallback(e)}
-              className="flex flex-row justify-center text-center px-2 mt-5 font-ez scale-125"
-            >
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:1"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:2"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:3"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:4"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:5"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-              <input
-                className="m-2 border h-10 w-10 text-center form-control rounded"
-                type="text"
-                id="S:6"
-                maxLength={1}
-                onChange={(e) => onOTPType(e.target.id, e.target.value)}
-              />
-            </div>
-            <span
-              className="font-ez cursor-pointer mt-1 mb-3"
-              onClick={() => resendOTP()}
-            >
-              resend otp
-            </span>
-            {loading ? (
-              <Loader size={0.6} />
-            ) : (
-              <button
-                onClick={() => register()}
-                className="relative inline-block text-lg group w-40 font-ez scale-90"
+              <div
+                id="otp"
+                onPaste={(e) => copyCutCallback(e)}
+                className="flex flex-row justify-center text-center px-2 mt-5 font-ez scale-125"
               >
-                <span className="relative z-10 block px-5 py-3 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
-                  <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
-                  <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
-                  <span className="relative">
-                    <span>next</span>
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:1"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:2"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:3"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:4"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:5"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+                <input
+                  className="m-2 border h-10 w-10 text-center form-control rounded"
+                  type="text"
+                  id="S:6"
+                  maxLength={1}
+                  onChange={(e) => onOTPType(e.target.id, e.target.value)}
+                />
+              </div>
+              <span
+                className="font-ez cursor-pointer mt-1 mb-3"
+                onClick={() => resendOTP()}
+              >
+                resend otp
+              </span>
+              {loading ? (
+                <Loader size={0.6} />
+              ) : (
+                <button
+                  onClick={() => register()}
+                  className="relative inline-block text-lg group w-40 font-ez scale-90"
+                >
+                  <span className="relative z-10 block px-5 py-3 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
+                    <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
+                    <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
+                    <span className="relative">
+                      <span>next</span>
+                    </span>
                   </span>
-                </span>
-              </button>
-            )}
-          </div>
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="m-auto flex flex-col items-center">
+                <h1 className="font-ez text-center text-7xl font-bold">
+                  password
+                </h1>
+                <h1 className="font-ez text-center text-2xl font-light">
+                  this will be used to encrypt and decrypt your personal data.
+                  this will stay on your local machine.
+                </h1>
+                <input
+                  className="mt-10 text-center font-ez px-3 py-2 border border-gray-300 rounded-md outline-none focus:outline-none focus:border-black transition-all text-sm w-5/12"
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="jimin@123"
+                />
+
+                {loading ? (
+                  <Loader size={0.6} />
+                ) : (
+                  <button
+                    onClick={() => ipfs()}
+                    className="mt-5 relative inline-block text-lg group w-40 font-ez scale-90"
+                  >
+                    <span className="relative z-10 block px-5 py-3 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
+                      <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
+                      <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
+                      <span className="relative">
+                        <span>next</span>
+                      </span>
+                    </span>
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="h-screen absolute w-screen z-1  background"></div>

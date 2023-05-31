@@ -23,7 +23,10 @@ async function createPost(req, res) {
       news : {
         topic : req.body.news.topic || "",
         desc : req.body.news.desc || ""
-      }
+      },
+      hearts : [],
+      fires : [],
+      comments : [],
     });
 
     const act_post = await post.save();

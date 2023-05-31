@@ -44,6 +44,7 @@ async function createUser(req, res) {
   } catch (err) {
     res.json({
       code: 3,
+      error : err,
     });
   }
 }

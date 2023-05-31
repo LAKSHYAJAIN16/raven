@@ -2,7 +2,9 @@ from bertopic import BERTopic
 from sklearn.datasets import fetch_20newsgroups
 
 print("is getting run")
-docs = fetch_20newsgroups(subset='all',  remove=('headers', 'footers', 'quotes'))['data']
+docs = [
+    ""
+]
 print(docs[:40])
 
 topic_model = BERTopic(verbose=True)

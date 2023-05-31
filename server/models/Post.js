@@ -53,6 +53,18 @@ const PostSchema = new mongoose.Schema(
             type : String,
             required : true,
         },
+    },
+    hearts : {
+        type : [String],
+        default : [],
+    },
+    fires : {
+        type : [String],
+        default : [],
+    },
+    comments : {
+        type : [Object],
+        default : [],
     }
   },
   { timestamps: true }

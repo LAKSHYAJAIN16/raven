@@ -84,20 +84,6 @@ const Signup: React.FC = () => {
                 />
               </div>
 
-              <div className="mb-4 w-full">
-                <label
-                  className="block text-gray-700 text-md font-ez mb-2"
-                  htmlFor="password"
-                >
-                  password 🔒🔑🤐
-                </label>
-                <input
-                  className="font-ez px-3 py-2 border border-gray-300 rounded-md outline-none focus:outline-none focus:border-black transition-all text-sm w-full"
-                  type="password"
-                  id="password"
-                />
-              </div>
-
               {loading ? (
                 <Loader size={0.6} />
               ) : (

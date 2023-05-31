@@ -177,6 +177,7 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
     //Send to axios backend
     const res = await axios.post(backendURL + "/create/post", payload);
     console.log(res);
+    callback("create")
   }
 
   function returnType() {

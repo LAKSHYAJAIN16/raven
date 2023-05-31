@@ -13,11 +13,6 @@ const UserSchema = new mongoose.Schema(
         "https://upload.wikimedia.org/wikipedia/en/d/d7/Harry_Potter_character_poster.jpg",
       required: false,
     },
-    animal: {
-      type: String,
-      default: "",
-      required: false,
-    },
     cover: {
       type: String,
       default: "",

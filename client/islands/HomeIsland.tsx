@@ -3,9 +3,10 @@ import axios from "axios";
 import { backendURL } from "../settings";
 import Loader from "../components/Loader";
 import moment from "moment";
+import UserData from "../components/UserData";
 
 export default function HomeIsland() {
-  const [feed, setFeed] = useState([]);
+  const [feed, setFeed] = useState<any[]>([]);
 
   useEffect(() => {
     const fn = async () => {
@@ -18,7 +19,7 @@ export default function HomeIsland() {
     fn();
   }, []);
 
-  const TextPost = ({ object }) => {
+  const TextPost = ({ object, heartOrFireCallback }) => {
     return (
       <div className="flex flex-col border-2 border-black rounded-xl">
         <div className="pl-3 pr-3 pt-2 pb-2 flex">
@@ -46,10 +47,12 @@ export default function HomeIsland() {
               <img
                 src={"/heart-red.png"}
                 className="w-5 h-5 cursor-pointer hover:scale-110 mr-1"
+                onClick={() => heartOrFireCallback(object, 0)}
               />
               <img
                 src={"/fire.png"}
                 className="w-5 h-5 cursor-pointer hover:scale-110 mr-1 -mt-1"
+                onClick={() => heartOrFireCallback(object, 1)}
               />
               <img
                 src={"/comment.png"}
@@ -62,7 +65,7 @@ export default function HomeIsland() {
     );
   };
 
-  const ImgPost = ({ object }) => {
+  const ImgPost = ({ object, heartOrFireCallback }) => {
     function findGridSize(n: number) {
       const factors: number[] = [];
       for (let i = 2; i <= n; i++) {
@@ -110,10 +113,12 @@ export default function HomeIsland() {
                 <img
                   src={"/heart-red.png"}
                   className="w-7 h-7 cursor-pointer hover:scale-110 mr-1"
+                  onClick={() => heartOrFireCallback(object, 0)}
                 />
                 <img
                   src={"/fire.png"}
                   className="w-7 h-7 cursor-pointer hover:scale-110 mr-1 -mt-1"
+                  onClick={() => heartOrFireCallback(object, 1)}
                 />
                 <img
                   src={"/comment.png"}
@@ -168,10 +173,12 @@ export default function HomeIsland() {
                 <img
                   src={"/heart-red.png"}
                   className="w-5 h-5 cursor-pointer hover:scale-110 mr-1"
+                  onClick={() => heartOrFireCallback(object, 0)}
                 />
                 <img
                   src={"/fire.png"}
                   className="w-5 h-5 cursor-pointer hover:scale-110 mr-1 -mt-1"
+                  onClick={() => heartOrFireCallback(object, 1)}
                 />
                 <img
                   src={"/comment.png"}
@@ -195,7 +202,7 @@ export default function HomeIsland() {
     );
   };
 
-  const VidPost = ({ object }) => {
+  const VidPost = ({ object, heartOrFireCallback }) => {
     return (
       <div className="flex flex-col border-2 border-black rounded-xl">
         <div className="pl-3 pr-3 pt-2 pb-2 flex">
@@ -227,10 +234,12 @@ export default function HomeIsland() {
               <img
                 src={"/heart-red.png"}
                 className="w-5 h-5 cursor-pointer hover:scale-110 mr-1"
+                onClick={() => heartOrFireCallback(object, 0)}
               />
               <img
                 src={"/fire.png"}
                 className="w-5 h-5 cursor-pointer hover:scale-110 mr-1 -mt-1"
+                onClick={() => heartOrFireCallback(object, 1)}
               />
               <img
                 src={"/comment.png"}
@@ -241,6 +250,28 @@ export default function HomeIsland() {
         </div>
       </div>
     );
+  };
+
+  const heartOrFirePost = async (post, action: number) => {
+    // Save it to our user data object (localStorage)
+    const localObject = {
+      n: post.text,
+      l: 1,
+      t: Date.now(),
+    };
+    const data: any[] = JSON.parse(localStorage.getItem("u-data") || "[]");
+    data.push(localObject);
+    localStorage.setItem("u-data", JSON.stringify(data));
+
+    // Register backend (simply as a number, not actual data)
+    const obj = {
+      id: post["_id"],
+      toc: new Date(Date.now()).toISOString(),
+      type: action,
+    };
+
+    const res = await axios.post(backendURL + "/create/heart-fire", obj);
+    console.log(res);
   };
 
   return (
@@ -254,11 +285,22 @@ export default function HomeIsland() {
           {/* Render all of our posts */}
           <div>
             {feed.map((e) => (
-              <>
-                {e.type === 0 && <TextPost object={e} />}
-                {e.type === 1 && <ImgPost object={e} />}
-                {e.type === 2 && <VidPost object={e} />}
-              </>
+              <a href={`/h/post/${e._id}`}>
+                <div className="mt-5">
+                  {e.type === 0 && (
+                    <TextPost
+                      object={e}
+                      heartOrFireCallback={heartOrFirePost}
+                    />
+                  )}
+                  {e.type === 1 && (
+                    <ImgPost object={e} heartOrFireCallback={heartOrFirePost} />
+                  )}
+                  {e.type === 2 && (
+                    <VidPost object={e} heartOrFireCallback={heartOrFirePost} />
+                  )}
+                </div>
+              </a>
             ))}
           </div>
         </div>
