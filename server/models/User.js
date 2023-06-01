@@ -26,7 +26,13 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique : true,
+      unique: false,
+      // Should be true, but for testing no
+    },
+    helia_id: {
+      type: String,
+      required: false,
+      unique: true,
     },
   },
   { timestamps: true }

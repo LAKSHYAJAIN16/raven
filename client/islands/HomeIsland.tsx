@@ -4,9 +4,12 @@ import { backendURL } from "../settings";
 import Loader from "../components/Loader";
 import moment from "moment";
 import UserData from "../components/UserData";
+import {createHelia} from "helia";
+import { Strings, strings } from "@helia/strings";
 
 export default function HomeIsland() {
   const [feed, setFeed] = useState<any[]>([]);
+  const [heliaNode, setHeliaNode] = useState<Strings | null>(null);
 
   useEffect(() => {
     const fn = async () => {
@@ -15,6 +18,11 @@ export default function HomeIsland() {
       const actPosts = dat.data.data;
       setFeed(actPosts);
       console.log(actPosts);
+
+      // helia
+      const n = await createHelia();
+      const s = strings(n);
+      setHeliaNode(s);
     };
     fn();
   }, []);
@@ -285,7 +293,7 @@ export default function HomeIsland() {
           {/* Render all of our posts */}
           <div>
             {feed.map((e) => (
-              <a href={`/h/post/${e._id}`}>
+              // <a href={`/h/post/${e._id}`}>
                 <div className="mt-5">
                   {e.type === 0 && (
                     <TextPost
@@ -300,7 +308,7 @@ export default function HomeIsland() {
                     <VidPost object={e} heartOrFireCallback={heartOrFirePost} />
                   )}
                 </div>
-              </a>
+              // </a>
             ))}
           </div>
         </div>

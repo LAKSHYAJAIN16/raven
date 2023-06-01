@@ -6,13 +6,15 @@ import NotificationManager, {
   NotificationRaven,
   NotificationType,
 } from "../../components/NotificationManager";
-import * as IPFS from "ipfs-core";
+import { createHelia } from "helia";
+import { strings } from "@helia/strings";
 import { createCipher, createDecipher } from "crypto";
 
 const Verify: React.FC = () => {
-  const [uiState, setUiState] = useState<number>(1);
+  const [uiState, setUiState] = useState<number>(0);
   const [id, setId] = useState<string>("");
   const [uID, setUID] = useState<string>("");
+  const [userIdentification, setUserIdentification] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<NotificationRaven[]>([]);
@@ -101,8 +103,9 @@ const Verify: React.FC = () => {
     } else if (res.data.code === 2) {
       //We're logged in boiz!
       localStorage.setItem("base", JSON.stringify(res.data.data));
-
+      setUserIdentification(res.data.data._id);
       setUiState(1);
+      setLoading(false);
     }
   }
 
@@ -133,10 +136,21 @@ const Verify: React.FC = () => {
     const ipfs_data_encrypted =
       cipher2.update(str_obj, "utf8", "hex") + cipher2.final("hex");
 
-    // now send req to IPFS
-    const node = await IPFS.create({repo: 'ok' + Math.random()});
-    const results = await node.add(ipfs_data_encrypted);
-    console.log(results);
+    // now send req to helia?
+    const helia = await createHelia();
+    const s = strings(helia);
+
+    const myImmutableAddress = await s.add(ipfs_data_encrypted);
+    const helia_id: string = myImmutableAddress.toString();
+
+    // send axios req (2 times because of a bug XD)
+    const res_2 = await axios.post(backendURL + "/create/helia", {
+      id: userIdentification,
+      helia: helia_id,
+    });
+    localStorage.setItem("___", helia_id);
+    localStorage.setItem("dat", ipfs_data_encrypted);
+    window.location.replace("/h/home");
   }
 
   function sendNotification(head: string, content: string) {

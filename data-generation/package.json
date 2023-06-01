@@ -1,0 +1,17 @@
+{
+  "name": "data-generation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chatgpt": "^5.2.5",
+    "openai-authenticator": "^0.0.3"
+  }
+}

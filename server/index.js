@@ -8,6 +8,7 @@ const createUser = require("./routes/create/user");
 const createPost = require("./routes/create/post");
 const allPosts = require("./routes/get/allPosts");
 const heartOrFire = require("./routes/update/heartOrFire");
+const addHeliaId = require("./routes/update/helia-callback");
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,10 @@ app.post("/email/verify-email", async (req, res) => {
 
 app.post("/create/heart-fire", async (req, res) => {
   await heartOrFire(req, res);
+});
+
+app.post("/create/helia", async(req, res) => {
+  await addHeliaId(req, res);
 });
 
 app.get("/get/posts", async (req, res) => {
