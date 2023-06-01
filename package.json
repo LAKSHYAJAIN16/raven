@@ -1,6 +1,7 @@
 {
   "scripts": {
     "client": "cd client && npm run dev",
-    "server": "cd server && npm start"
+    "server": "cd server && npm start",
+    "data" : "cd data-generation && npm start"
   }
 }

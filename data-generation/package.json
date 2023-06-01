@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chatgpt": "^5.2.5",
+    "axios": "^1.4.0",
+    "chatgpt": "^3.4.2",
+    "googlethis": "^1.7.1",
     "openai-authenticator": "^0.0.3"
   }
 }

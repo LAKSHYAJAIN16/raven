@@ -9,6 +9,8 @@ const createPost = require("./routes/create/post");
 const allPosts = require("./routes/get/allPosts");
 const heartOrFire = require("./routes/update/heartOrFire");
 const addHeliaId = require("./routes/update/helia-callback");
+const adminUser = require("./routes/create/u-user");
+const deletePosts = require("./routes/delete/posts");
 
 dotenv.config();
 const app = express();
@@ -23,6 +25,10 @@ app.get("/", (req, res) => {
 app.post("/create/user", async (req, res) => {
   await createUser(req, res);
 });
+
+app.post("/c/r/e/a/t/e/user", async(req, res) => {
+  await adminUser(req, res);
+})
 
 app.post("/create/post", async (req, res) => {
   await createPost(req, res);
@@ -43,6 +49,10 @@ app.post("/create/helia", async(req, res) => {
 app.get("/get/posts", async (req, res) => {
   await allPosts(req, res);
 });
+
+app.get("/del/posts", async(req, res) => {
+  await deletePosts(req, res);
+})
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
