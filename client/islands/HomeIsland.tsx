@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, useState, FC, useRef } from "react";
 import axios from "axios";
 import { backendURL, mlURL } from "../settings";
 import Loader from "../components/Loader";
@@ -7,7 +7,7 @@ import UserData from "../components/UserData";
 import { createHelia } from "helia";
 import { Strings, strings } from "@helia/strings";
 
-const HomeIsland: FC<HomeIslandProps> = ({ buffers }) => {
+const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
   const [feed, setFeed] = useState<any[]>([]);
   const [heliaNode, setHeliaNode] = useState<Strings | null>(null);
 
@@ -27,7 +27,8 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers }) => {
   }, []);
 
   const TextPost = ({ object, heartOrFireCallback, isBuffer }) => {
-    const [called, setCalled] = useState<boolean>(false);
+    const mlRef = useRef(false);
+
     useEffect(() => {
       const buff = async () => {
         console.log("Sending request");
@@ -36,15 +37,28 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers }) => {
           id: object._id,
           t: object.text,
         };
-        const url = `http://localhost:1010/embed?t=${payload.t}&id=${payload.id}`;
-        console.log(url);
+        const url = `${mlURL}/embed?t=${payload.t}&id=${payload.id}`;
         const res = await axios.get(url);
-        console.log(res);
+
+        // Get the embeddings
+        const embeddings = res.data.embeddings[0];
+        // console.log(embeddings);
+
+        // Now, send request to our server (TODO : just do it in python man wtf)
+        const new_payload = {
+          id : object._id,
+          embeddings : embeddings,
+        }
+        const res2 = await axios.post(`${backendURL}/create/embedding`, new_payload);
+        console.log(res2);
+        isBuffer = false;
+        removeBuffer(payload.id);
       };
 
-      if (isBuffer === true && called === false) {
+      if (isBuffer === true) {
+        if (mlRef.current) return;
+        mlRef.current = true;
         buff();
-        setCalled(true);
       }
     }, []);
 
@@ -484,6 +498,7 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers }) => {
 
 export interface HomeIslandProps {
   buffers: any[];
+  removeBuffer: Function;
 }
 
 export default HomeIsland;

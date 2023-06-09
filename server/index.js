@@ -12,6 +12,7 @@ const addHeliaId = require("./routes/update/helia-callback");
 const adminUser = require("./routes/create/u-user");
 const deletePosts = require("./routes/delete/posts");
 const algorithm = require("./routes/get/algorithm");
+const createEmbedding = require("./routes/create/embeddings");
 
 dotenv.config();
 const app = express();
@@ -46,6 +47,10 @@ app.post("/create/heart-fire", async (req, res) => {
 app.post("/create/helia", async(req, res) => {
   await addHeliaId(req, res);
 });
+
+app.post("/create/embedding", async(req, res) => {
+  await createEmbedding(req, res);
+})
 
 app.get("/get/posts", async (req, res) => {
   await allPosts(req, res);

@@ -32,6 +32,18 @@ const Home: React.FC = () => {
     }
   }
 
+  function removeBuffer(id : string){
+    console.log("was called");
+    const m_buffers = [...buffers];
+    for (let i = 0; i < m_buffers.length; i++) {
+      const b = m_buffers[i];
+      if(b._id === id){
+        b.isProcessed = true;
+      }
+    }
+    setBuffers(m_buffers);
+  }
+
   useEffect(() => {
   }, [])
   
@@ -125,7 +137,7 @@ const Home: React.FC = () => {
           {isDebate && <DebateIsland />}
           {isDiscover && <DiscoverIsland />}
           {isPrivacy && <PrivacyIsland />}
-          {isHome && <HomeIsland buffers={buffers} />}
+          {isHome && <HomeIsland buffers={buffers} removeBuffer={removeBuffer}/>}
         </div>
       </div>
       <div className="h-screen absolute w-screen z-1  background"></div>
