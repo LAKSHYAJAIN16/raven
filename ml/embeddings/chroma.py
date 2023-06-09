@@ -4,33 +4,22 @@ import pandas as pd
 import string
 import random
 from chromadb.utils import embedding_functions
+from retrieve_all_posts import retrieve_all_posts
 
 chroma_client = chromadb.Client()
 
-openai_ef = embedding_functions.OpenAIEmbeddingFunction(
-    api_key="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",
-    model_name="text-embedding-ada-002"
-)
-
 collection = chroma_client.create_collection(
-    embedding_function=openai_ef,
-    name="messages")
+    name="messages", embedding_function=embedding_fn)
 
 # some test data
-data = [
-    "hello world!",
-    "i love myself some good taylor swift! you got it girl!",
-    "she played the fiddle in an irish band, but she fell in love with an englishman",
-    "omg, elon!"
-]
+data = retrieve_all_posts()
 
 for k in data:
-    id=''.join(random.choices(string.ascii_uppercase +
-                             string.digits, k=10))
+    id=k[0]
     # add it baby!
     collection.add(
-        documents=[k],
-        ids=[id]
+        documents=[k[1]],
+        ids=[id],
     )
 
 def post(text, id):
@@ -53,4 +42,7 @@ def get_post(query, n):
     return json.dumps(results)
 
 
-print(get_post("omg! taylor! me love taylor swift!", 3))
+while True:
+    x = input("Enter search string")
+    n = int(input("Enter number of results"))
+    print(get_post(x, n))

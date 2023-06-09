@@ -11,6 +11,7 @@ const heartOrFire = require("./routes/update/heartOrFire");
 const addHeliaId = require("./routes/update/helia-callback");
 const adminUser = require("./routes/create/u-user");
 const deletePosts = require("./routes/delete/posts");
+const algorithm = require("./routes/get/algorithm");
 
 dotenv.config();
 const app = express();
@@ -52,6 +53,10 @@ app.get("/get/posts", async (req, res) => {
 
 app.get("/del/posts", async(req, res) => {
   await deletePosts(req, res);
+})
+
+app.get("/get/algorithm", async(req, res) => {
+  await algorithm(req, res);
 })
 
 app.listen(port, () => {

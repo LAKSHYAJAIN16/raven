@@ -5,7 +5,7 @@ import names from "./names.js";
 
 // Some basic data
 const NUM_OF_AGENTS = 10;
-const FREQUENCY = 3 * 60 * 1000;
+const FREQUENCY = 5 * 60 * 1000;
 const BACKEND_URL = "http://localhost:5000";
 let clients = [];
 
@@ -43,7 +43,7 @@ async function program() {
     async function textPost() {
       // Generate text
       const result = await api.sendMessage(
-        `You are a teenager. You have a personaility, with likes and dislikes. Write a twitter post. Keep it short and crisp, below 200 characters. No emojis or hashtags. Keep it as natural as possible. You can write on a wide variety of people and topics. Try to show your personality. Also try to use more proper nouns and exact information. Try to encorporate popular topics and popular people. Also form proper, gramatically correct sentences.
+        `You are a teenager. You have a personaility, with likes and dislikes. Write a social media post. Keep it short and crisp, below 200 characters. No emojis or hashtags. Keep it as natural as possible. You can write on a wide variety of people and topics. Try to show your personality. Also try to use more proper nouns and exact information. Try to encorporate relatively obscure topics and celebrities. Also form proper, gramatically correct sentences.
         `
       );
       const text = result.response;
@@ -75,7 +75,7 @@ async function program() {
     async function imagePost() {
       // Generate text
       const result = await api.sendMessage(
-        `I want two things from you. First, give a prompt for an image search engine like google (the prompt could be about a person, animal, object,painting, landscape, scenery, or anything else you find suitable). Then, write a caption which could be suitable for an image aligning with your prompt. Thanks`
+        `I want two things from you. First, give a prompt for an image search engine, featuring the name of a celebrity. Then, write a caption which could be suitable for an image aligning with your prompt. Thanks`
       );
       const text = result.response;
 
