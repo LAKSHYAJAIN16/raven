@@ -1136,12 +1136,19 @@
   row-gap: 10px;
 }
 
+.blink {
+  animation: blink 3s ease infinite;
+}
+
 @keyframes blink {
-  from {
+  0%{
     opacity: 1;
   }
-  to {
+  50% {
     opacity: 0;
+  }
+  100%{
+    opacity: 1;
   }
 }
 

@@ -15,7 +15,7 @@ const Editor = dynamic<EditorProps>(
   { ssr: false }
 );
 
-const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
+const CreateIsland: React.FC<IslandProps> = ({ callback, buffers }) => {
   const pfpic = UserData.getData("profilePic");
   const pictureInput = useRef(null);
   const videoInput = useRef(null);
@@ -141,10 +141,10 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
     const text: string = document.getElementById("text")?.innerHTML || "";
 
     // Some formatting $#!7 :\
-    if(images.length > 0){
+    if (images.length > 0) {
       setVideo([]);
     }
-    if(video.length > 0){
+    if (video.length > 0) {
       setImages([[]]);
     }
 
@@ -177,7 +177,11 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
     //Send to axios backend
     const res = await axios.post(backendURL + "/create/post", payload);
     console.log(res);
-    callback("create")
+
+    //Now, add our post in the buffer so that we can run it on the home page
+    const buffer_posts = buffers;
+    buffer_posts.push({ ...res.data.data, isProcessed: false });
+    callback("create", buffer_posts);
   }
 
   function returnType() {
@@ -448,7 +452,8 @@ const CreateIsland: React.FC<IslandProps> = ({ callback }) => {
 };
 
 export interface IslandProps {
-  callback: (type: string) => void;
+  callback: (type: string, buffers?: any[]) => void;
+  buffers: any[];
 }
 
 export default CreateIsland;

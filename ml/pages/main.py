@@ -1,11 +1,13 @@
 import chromadb
 import json
 from flask import Flask
+from flask_cors import CORS
 from flask import request
 from components.embed import embed_text, embedding_fn
 
 # init flask
 app = Flask(__name__)
+CORS(app)
 
 # init chroma
 chroma_client = chromadb.Client()
@@ -17,10 +19,10 @@ collection = chroma_client.create_collection(
 def home():
     return "Hello, World!"
 
-@app.route("/embed", methods=["POST"])
+@app.route("/embed")
 def embed():
     # first, embed text
-    dat = request.get_json()
+    dat = request.args.to_dict()
     txt = dat["t"]
     embeddings = embed_text(txt, embedding_function)
     print(embeddings)

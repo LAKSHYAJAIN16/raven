@@ -2,6 +2,7 @@
   "scripts": {
     "client": "cd client && npm run dev",
     "server": "cd server && npm start",
-    "data" : "cd data-generation && npm start"
+    "data" : "cd data-generation && npm start",
+    "ml" : "C:/Users/GAMING/AppData/Local/Programs/Python/Python310/python.exe d:/Projects/v3/raven/ml/pages/main.py"
   }
 }

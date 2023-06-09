@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateIsland from "../../islands/CreateIsland";
 import DiscoverIsland from "../../islands/DiscoverIsland";
 import DebateIsland from "../../islands/DebateIsland";
@@ -11,6 +11,7 @@ const Home: React.FC = () => {
   const [isDebate, setIsDebate] = useState<boolean>(false);
   const [isPrivacy, setIsPrivacy] = useState<boolean>(false);
   const [isCreate, setIsCreate] = useState<boolean>(false);
+  const [buffers, setBuffers] = useState<any[]>([]);
 
   function setState(func: any) {
     setIsHome(false);
@@ -20,20 +21,24 @@ const Home: React.FC = () => {
     func(true);
   }
 
-  function islandCallback(type: string) {
+  function islandCallback(type: string, buffers?: any[]) {
     switch (type) {
       case "create":
         setIsCreate(false);
+        setBuffers(buffers || []);
         break;
       default:
         break;
     }
   }
 
+  useEffect(() => {
+  }, [])
+  
   return (
     <>
       <div className="h-screen absolute w-screen z-20">
-        {isCreate && <CreateIsland callback={islandCallback} />}
+        {isCreate && <CreateIsland callback={islandCallback} buffers={buffers}/>}
         <div className="w-screen">
           {/* Actual thing */}
 
@@ -120,7 +125,7 @@ const Home: React.FC = () => {
           {isDebate && <DebateIsland />}
           {isDiscover && <DiscoverIsland />}
           {isPrivacy && <PrivacyIsland />}
-          {isHome && <HomeIsland />}
+          {isHome && <HomeIsland buffers={buffers} />}
         </div>
       </div>
       <div className="h-screen absolute w-screen z-1  background"></div>

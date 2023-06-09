@@ -1,35 +1,55 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import axios from "axios";
-import { backendURL } from "../settings";
+import { backendURL, mlURL } from "../settings";
 import Loader from "../components/Loader";
 import moment from "moment";
 import UserData from "../components/UserData";
-import {createHelia} from "helia";
+import { createHelia } from "helia";
 import { Strings, strings } from "@helia/strings";
 
-export default function HomeIsland() {
+const HomeIsland: FC<HomeIslandProps> = ({ buffers }) => {
   const [feed, setFeed] = useState<any[]>([]);
   const [heliaNode, setHeliaNode] = useState<Strings | null>(null);
 
   useEffect(() => {
     const fn = async () => {
       // backend call
-      const dat = await axios.get(backendURL + "/get/posts");
-      const actPosts = dat.data.data;
-      setFeed(actPosts);
-      console.log(actPosts);
-
+      // const dat = await axios.get(backendURL + "/get/posts");
+      // const actPosts = dat.data.data;
+      // setFeed(actPosts);
+      // console.log(actPosts);
       // helia
-      const n = await createHelia();
-      const s = strings(n);
-      setHeliaNode(s);
+      // const n = await createHelia();
+      // const s = strings(n);
+      // setHeliaNode(s);
     };
     fn();
   }, []);
 
-  const TextPost = ({ object, heartOrFireCallback }) => {
+  const TextPost = ({ object, heartOrFireCallback, isBuffer }) => {
+    const [called, setCalled] = useState<boolean>(false);
+    useEffect(() => {
+      const buff = async () => {
+        console.log("Sending request");
+        // Send request to our ML point
+        const payload = {
+          id: object._id,
+          t: object.text,
+        };
+        const url = `http://localhost:1010/embed?t=${payload.t}&id=${payload.id}`;
+        console.log(url);
+        const res = await axios.get(url);
+        console.log(res);
+      };
+
+      if (isBuffer === true && called === false) {
+        buff();
+        setCalled(true);
+      }
+    }, []);
+
     return (
-      <div className="flex flex-col border-2 border-black rounded-xl">
+      <div className={`flex flex-col border-2 border-black rounded-xl`}>
         <div className="pl-3 pr-3 pt-2 pb-2 flex">
           <div>
             <img
@@ -38,19 +58,47 @@ export default function HomeIsland() {
             />
           </div>
           <div className="flex flex-col max-w-xl">
-            <p className="font-ez ml-2 font-bold text-sm">
-              <span>{object.user} </span>
-              <span className="text-xs text-gray-500">
-                {moment(object.createdAt).fromNow()}
-              </span>
-            </p>
+            {isBuffer ? (
+              <>
+                <p className="font-ez ml-2 font-bold text-sm">
+                  <span className="text-red-500">{object.user} </span>
+                  <span className="text-xs text-black">
+                    {moment(object.createdAt).fromNow()}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="font-ez ml-2 font-bold text-sm">
+                <span>{object.user} </span>
+                <span className="text-xs text-gray-500">
+                  {moment(object.createdAt).fromNow()}
+                </span>
+              </p>
+            )}
+
             <span className="z-10 font-ez ml-2 font-bold text-[9px] text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-700">
               text post
             </span>
-            <p
-              className="font-ez ml-2 text-lg"
-              dangerouslySetInnerHTML={{ __html: object.text }}
-            ></p>
+
+            {isBuffer ? (
+              <>
+                <p
+                  className="font-ez ml-2 text-lg text-red-500"
+                  dangerouslySetInnerHTML={{ __html: object.text }}
+                ></p>
+                <p className="text-black text-sm font-ez pl-2 blink">
+                  processing post...
+                </p>
+              </>
+            ) : (
+              <>
+                <p
+                  className="font-ez ml-2 text-lg"
+                  dangerouslySetInnerHTML={{ __html: object.text }}
+                ></p>
+              </>
+            )}
+
             <div className="ml-2 flex items-center mt-1">
               <img
                 src={"/heart-red.png"}
@@ -73,7 +121,7 @@ export default function HomeIsland() {
     );
   };
 
-  const ImgPost = ({ object, heartOrFireCallback }) => {
+  const ImgPost = ({ object, heartOrFireCallback, isBuffer }) => {
     function findGridSize(n: number) {
       const factors: number[] = [];
       for (let i = 2; i <= n; i++) {
@@ -96,19 +144,44 @@ export default function HomeIsland() {
               />
             </div>
             <div className="flex flex-col max-w-xl">
-              <p className="font-ez ml-2 font-bold text-sm">
-                <span>{object.user} </span>
-                <span className="text-xs text-gray-500">
-                  {moment(object.createdAt).fromNow()}
-                </span>
-              </p>
+              {isBuffer ? (
+                <>
+                  <p className="font-ez ml-2 font-bold text-sm">
+                    <span className="text-red-500">{object.user} </span>
+                    <span className="text-xs text-black">
+                      {moment(object.createdAt).fromNow()}
+                    </span>
+                  </p>
+                </>
+              ) : (
+                <p className="font-ez ml-2 font-bold text-sm">
+                  <span>{object.user} </span>
+                  <span className="text-xs text-gray-500">
+                    {moment(object.createdAt).fromNow()}
+                  </span>
+                </p>
+              )}
               <span className="z-10 font-ez ml-2 font-bold text-[9px] text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-700">
                 img post
               </span>
-              <p
-                className="font-ez ml-2 text-lg"
-                dangerouslySetInnerHTML={{ __html: object.text }}
-              ></p>
+              {isBuffer ? (
+                <>
+                  <p
+                    className="font-ez ml-2 text-lg text-red-500"
+                    dangerouslySetInnerHTML={{ __html: object.text }}
+                  ></p>
+                  <p className="text-black text-sm font-ez pl-2 blink">
+                    processing post...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p
+                    className="font-ez ml-2 text-lg"
+                    dangerouslySetInnerHTML={{ __html: object.text }}
+                  ></p>
+                </>
+              )}
               <div className="grid">
                 {object.images.map((f, idx) => (
                   <img
@@ -150,16 +223,41 @@ export default function HomeIsland() {
               />
             </div>
             <div className="flex flex-col max-w-xl">
-              <p className="font-ez ml-2 font-bold text-sm">
-                <span>{object.user} </span>
-                <span className="text-xs text-gray-500">
-                  {moment(object.createdAt).fromNow()}
-                </span>
-              </p>
-              <p
-                className="font-ez ml-2 text-2xl"
-                dangerouslySetInnerHTML={{ __html: object.text }}
-              ></p>
+              {isBuffer ? (
+                <>
+                  <p className="font-ez ml-2 font-bold text-sm">
+                    <span className="text-red-500">{object.user} </span>
+                    <span className="text-xs text-black">
+                      {moment(object.createdAt).fromNow()}
+                    </span>
+                  </p>
+                </>
+              ) : (
+                <p className="font-ez ml-2 font-bold text-sm">
+                  <span>{object.user} </span>
+                  <span className="text-xs text-gray-500">
+                    {moment(object.createdAt).fromNow()}
+                  </span>
+                </p>
+              )}
+              {isBuffer ? (
+                <>
+                  <p
+                    className="font-ez ml-2 text-lg text-red-500"
+                    dangerouslySetInnerHTML={{ __html: object.text }}
+                  ></p>
+                  <p className="text-black text-sm font-ez pl-2 blink">
+                    processing post...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p
+                    className="font-ez ml-2 text-lg"
+                    dangerouslySetInnerHTML={{ __html: object.text }}
+                  ></p>
+                </>
+              )}
               <span className="z-10 font-ez ml-2 font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-700">
                 image collection
               </span>
@@ -210,7 +308,7 @@ export default function HomeIsland() {
     );
   };
 
-  const VidPost = ({ object, heartOrFireCallback }) => {
+  const VidPost = ({ object, heartOrFireCallback, isBuffer }) => {
     return (
       <div className="flex flex-col border-2 border-black rounded-xl">
         <div className="pl-3 pr-3 pt-2 pb-2 flex">
@@ -221,12 +319,23 @@ export default function HomeIsland() {
             />
           </div>
           <div className="flex flex-col max-w-xl">
-            <p className="font-ez ml-2 font-bold text-sm">
-              <span>{object.user} </span>
-              <span className="text-xs text-gray-500">
-                {moment(object.createdAt).fromNow()}
-              </span>
-            </p>
+            {isBuffer ? (
+              <>
+                <p className="font-ez ml-2 font-bold text-sm">
+                  <span className="text-red-500">{object.user} </span>
+                  <span className="text-xs text-black">
+                    {moment(object.createdAt).fromNow()}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="font-ez ml-2 font-bold text-sm">
+                <span>{object.user} </span>
+                <span className="text-xs text-gray-500">
+                  {moment(object.createdAt).fromNow()}
+                </span>
+              </p>
+            )}
             <span className="z-10 font-ez ml-2 font-bold text-[9px] text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-green-700">
               video post
             </span>
@@ -234,10 +343,24 @@ export default function HomeIsland() {
             <video className="-z-10" controls>
               <source src={object.videos[0]} type="video/mp4" />
             </video>
-            <p
-              className="font-ez ml-2 text-lg"
-              dangerouslySetInnerHTML={{ __html: object.text }}
-            ></p>
+            {isBuffer ? (
+              <>
+                <p
+                  className="font-ez ml-2 text-lg text-red-500"
+                  dangerouslySetInnerHTML={{ __html: object.text }}
+                ></p>
+                <p className="text-black text-sm font-ez pl-2 blink">
+                  processing post...
+                </p>
+              </>
+            ) : (
+              <>
+                <p
+                  className="font-ez ml-2 text-lg"
+                  dangerouslySetInnerHTML={{ __html: object.text }}
+                ></p>
+              </>
+            )}
             <div className="ml-2 flex items-center mt-1">
               <img
                 src={"/heart-red.png"}
@@ -284,6 +407,39 @@ export default function HomeIsland() {
 
   return (
     <div>
+      <div className="flex justify-center mt-10 ">
+        {/* Render all of our posts */}
+        <div>
+          {buffers.map((e) => (
+            // <a href={`/h/post/${e._id}`}>
+            <div className="mt-5">
+              {e.type === 0 && (
+                <TextPost
+                  object={e}
+                  heartOrFireCallback={heartOrFirePost}
+                  isBuffer={!e.isProcessed}
+                />
+              )}
+              {e.type === 1 && (
+                <ImgPost
+                  object={e}
+                  heartOrFireCallback={heartOrFirePost}
+                  isBuffer={!e.isProcessed}
+                />
+              )}
+              {e.type === 2 && (
+                <VidPost
+                  object={e}
+                  heartOrFireCallback={heartOrFirePost}
+                  isBuffer={!e.isProcessed}
+                />
+              )}
+            </div>
+            // </a>
+          ))}
+        </div>
+      </div>
+
       {feed.length === 0 ? (
         <div className="flex justify-center items-center mt-3">
           <Loader size={1} />
@@ -294,20 +450,29 @@ export default function HomeIsland() {
           <div>
             {feed.map((e) => (
               // <a href={`/h/post/${e._id}`}>
-                <div className="mt-5">
-                  {e.type === 0 && (
-                    <TextPost
-                      object={e}
-                      heartOrFireCallback={heartOrFirePost}
-                    />
-                  )}
-                  {e.type === 1 && (
-                    <ImgPost object={e} heartOrFireCallback={heartOrFirePost} />
-                  )}
-                  {e.type === 2 && (
-                    <VidPost object={e} heartOrFireCallback={heartOrFirePost} />
-                  )}
-                </div>
+              <div className="mt-5">
+                {e.type === 0 && (
+                  <TextPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={false}
+                  />
+                )}
+                {e.type === 1 && (
+                  <ImgPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={false}
+                  />
+                )}
+                {e.type === 2 && (
+                  <VidPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={false}
+                  />
+                )}
+              </div>
               // </a>
             ))}
           </div>
@@ -315,4 +480,10 @@ export default function HomeIsland() {
       )}
     </div>
   );
+};
+
+export interface HomeIslandProps {
+  buffers: any[];
 }
+
+export default HomeIsland;
