@@ -1,1 +1,52 @@
-{"meta": {"nDocuments": 5000, "dataset": "Million News Headlines", "k": 10, "perplexity": -9.823843571497786, "empty_amount": 0}, "topics": [[0, "0.013*\"iraq\" + 0.012*\"govt\" + 0.012*\"plan\" + 0.007*\"nsw\" + 0.007*\"qld\" + 0.007*\"hope\" + 0.007*\"boost\" + 0.006*\"councillor\" + 0.006*\"mp\" + 0.006*\"britain\""], [1, "0.011*\"says\" + 0.010*\"market\" + 0.010*\"continue\" + 0.009*\"wins\" + 0.008*\"jobs\" + 0.008*\"health\" + 0.008*\"held\" + 0.007*\"dept\" + 0.007*\"oil\" + 0.007*\"workers\""], [2, "0.010*\"hewitt\" + 0.009*\"aust\" + 0.008*\"car\" + 0.008*\"govt\" + 0.008*\"world\" + 0.008*\"war\" + 0.008*\"may\" + 0.006*\"firm\" + 0.006*\"charge\" + 0.006*\"indian\""], [3, "0.011*\"missing\" + 0.011*\"us\" + 0.010*\"fire\" + 0.010*\"says\" + 0.010*\"coast\" + 0.010*\"iraq\" + 0.009*\"police\" + 0.008*\"case\" + 0.007*\"new\" + 0.006*\"black\""], [4, "0.023*\"man\" + 0.013*\"charged\" + 0.011*\"sex\" + 0.010*\"final\" + 0.007*\"one\" + 0.006*\"police\" + 0.006*\"top\" + 0.006*\"greens\" + 0.006*\"medical\" + 0.006*\"figures\""], [5, "0.012*\"concerns\" + 0.009*\"year\" + 0.008*\"air\" + 0.008*\"first\" + 0.007*\"hospital\" + 0.006*\"festival\" + 0.006*\"assault\" + 0.006*\"trial\" + 0.006*\"asylum\" + 0.006*\"success\""], [6, "0.028*\"us\" + 0.010*\"season\" + 0.009*\"govt\" + 0.008*\"korea\" + 0.007*\"new\" + 0.007*\"two\" + 0.007*\"north\" + 0.006*\"jailed\" + 0.006*\"plan\" + 0.006*\"warning\""], [7, "0.015*\"iraq\" + 0.015*\"cyclone\" + 0.009*\"dies\" + 0.009*\"police\" + 0.009*\"election\" + 0.009*\"world\" + 0.008*\"new\" + 0.008*\"crash\" + 0.008*\"govt\" + 0.007*\"cup\""], [8, "0.012*\"water\" + 0.011*\"council\" + 0.011*\"security\" + 0.009*\"police\" + 0.009*\"test\" + 0.008*\"rail\" + 0.008*\"call\" + 0.007*\"death\" + 0.007*\"calls\" + 0.006*\"new\""], [9, "0.012*\"police\" + 0.008*\"rally\" + 0.007*\"industry\" + 0.006*\"us\" + 0.006*\"iraq\" + 0.006*\"injuries\" + 0.006*\"dengue\" + 0.006*\"still\" + 0.006*\"plan\" + 0.006*\"war\""]], "empty_topics": []}
+{
+  "meta": {
+    "nDocuments": 5000,
+    "dataset": "Million News Headlines",
+    "k": 10,
+    "perplexity": -9.823843571497786,
+    "empty_amount": 0
+  },
+  "topics": [
+    [
+      0,
+      "0.013*\"iraq\" + 0.012*\"govt\" + 0.012*\"plan\" + 0.007*\"nsw\" + 0.007*\"qld\" + 0.007*\"hope\" + 0.007*\"boost\" + 0.006*\"councillor\" + 0.006*\"mp\" + 0.006*\"britain\""
+    ],
+    [
+      1,
+      "0.011*\"says\" + 0.010*\"market\" + 0.010*\"continue\" + 0.009*\"wins\" + 0.008*\"jobs\" + 0.008*\"health\" + 0.008*\"held\" + 0.007*\"dept\" + 0.007*\"oil\" + 0.007*\"workers\""
+    ],
+    [
+      2,
+      "0.010*\"hewitt\" + 0.009*\"aust\" + 0.008*\"car\" + 0.008*\"govt\" + 0.008*\"world\" + 0.008*\"war\" + 0.008*\"may\" + 0.006*\"firm\" + 0.006*\"charge\" + 0.006*\"indian\""
+    ],
+    [
+      3,
+      "0.011*\"missing\" + 0.011*\"us\" + 0.010*\"fire\" + 0.010*\"says\" + 0.010*\"coast\" + 0.010*\"iraq\" + 0.009*\"police\" + 0.008*\"case\" + 0.007*\"new\" + 0.006*\"black\""
+    ],
+    [
+      4,
+      "0.023*\"man\" + 0.013*\"charged\" + 0.011*\"sex\" + 0.010*\"final\" + 0.007*\"one\" + 0.006*\"police\" + 0.006*\"top\" + 0.006*\"greens\" + 0.006*\"medical\" + 0.006*\"figures\""
+    ],
+    [
+      5,
+      "0.012*\"concerns\" + 0.009*\"year\" + 0.008*\"air\" + 0.008*\"first\" + 0.007*\"hospital\" + 0.006*\"festival\" + 0.006*\"assault\" + 0.006*\"trial\" + 0.006*\"asylum\" + 0.006*\"success\""
+    ],
+    [
+      6,
+      "0.028*\"us\" + 0.010*\"season\" + 0.009*\"govt\" + 0.008*\"korea\" + 0.007*\"new\" + 0.007*\"two\" + 0.007*\"north\" + 0.006*\"jailed\" + 0.006*\"plan\" + 0.006*\"warning\""
+    ],
+    [
+      7,
+      "0.015*\"iraq\" + 0.015*\"cyclone\" + 0.009*\"dies\" + 0.009*\"police\" + 0.009*\"election\" + 0.009*\"world\" + 0.008*\"new\" + 0.008*\"crash\" + 0.008*\"govt\" + 0.007*\"cup\""
+    ],
+    [
+      8,
+      "0.012*\"water\" + 0.011*\"council\" + 0.011*\"security\" + 0.009*\"police\" + 0.009*\"test\" + 0.008*\"rail\" + 0.008*\"call\" + 0.007*\"death\" + 0.007*\"calls\" + 0.006*\"new\""
+    ],
+    [
+      9,
+      "0.012*\"police\" + 0.008*\"rally\" + 0.007*\"industry\" + 0.006*\"us\" + 0.006*\"iraq\" + 0.006*\"injuries\" + 0.006*\"dengue\" + 0.006*\"still\" + 0.006*\"plan\" + 0.006*\"war\""
+    ]
+  ],
+  "empty_topics": []
+}
