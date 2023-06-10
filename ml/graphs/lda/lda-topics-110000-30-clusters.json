@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "nDocuments": 110000,
+    "dataset": "Million News Headlines",
+    "k": 30,
+    "perplexity": -17.743327045889348,
+    "empty_amount": 0
+  },
+  "topics": [
+    [
+      0,
+      "0.063*\"death\" + 0.047*\"lead\" + 0.042*\"athens\" + 0.041*\"hopes\" + 0.031*\"bush\" + 0.030*\"could\" + 0.025*\"wont\" + 0.024*\"highlights\" + 0.023*\"hope\" + 0.023*\"investigation\""
+    ],
+    [
+      1,
+      "0.052*\"drug\" + 0.050*\"two\" + 0.050*\"missing\" + 0.049*\"plans\" + 0.044*\"work\" + 0.043*\"talks\" + 0.042*\"police\" + 0.038*\"union\" + 0.037*\"search\" + 0.032*\"big\""
+    ],
+    [
+      2,
+      "0.055*\"iraqi\" + 0.051*\"school\" + 0.048*\"tas\" + 0.046*\"still\" + 0.046*\"child\" + 0.044*\"decision\" + 0.037*\"family\" + 0.037*\"australian\" + 0.030*\"aid\" + 0.028*\"blast\""
+    ],
+    [
+      3,
+      "0.119*\"man\" + 0.070*\"court\" + 0.048*\"murder\" + 0.039*\"sex\" + 0.038*\"charged\" + 0.030*\"attack\" + 0.026*\"faces\" + 0.023*\"charge\" + 0.022*\"woes\" + 0.021*\"warns\""
+    ],
+    [
+      4,
+      "0.056*\"backs\" + 0.056*\"funding\" + 0.054*\"found\" + 0.050*\"pay\" + 0.049*\"road\" + 0.028*\"change\" + 0.025*\"arrested\" + 0.024*\"sought\" + 0.024*\"targets\" + 0.021*\"mining\""
+    ],
+    [
+      5,
+      "0.062*\"face\" + 0.055*\"mp\" + 0.054*\"charges\" + 0.049*\"former\" + 0.044*\"appeal\" + 0.042*\"inquiry\" + 0.037*\"welcomes\" + 0.036*\"review\" + 0.035*\"end\" + 0.026*\"station\""
+    ],
+    [
+      6,
+      "0.062*\"security\" + 0.051*\"accused\" + 0.040*\"oil\" + 0.039*\"trade\" + 0.038*\"free\" + 0.032*\"jailed\" + 0.031*\"un\" + 0.026*\"focus\" + 0.023*\"downer\" + 0.022*\"close\""
+    ],
+    [
+      7,
+      "0.184*\"us\" + 0.117*\"iraq\" + 0.074*\"says\" + 0.044*\"australia\" + 0.032*\"three\" + 0.029*\"troops\" + 0.023*\"north\" + 0.021*\"killed\" + 0.017*\"training\" + 0.017*\"violence\""
+    ],
+    [
+      8,
+      "0.055*\"vic\" + 0.050*\"rise\" + 0.049*\"sa\" + 0.036*\"gets\" + 0.033*\"job\" + 0.026*\"green\" + 0.025*\"cuts\" + 0.024*\"run\" + 0.024*\"season\" + 0.022*\"merger\""
+    ],
+    [
+      9,
+      "0.056*\"killed\" + 0.043*\"budget\" + 0.040*\"mayor\" + 0.037*\"study\" + 0.036*\"accident\" + 0.035*\"aust\" + 0.034*\"final\" + 0.033*\"howard\" + 0.033*\"considers\" + 0.026*\"israeli\""
+    ],
+    [
+      10,
+      "0.077*\"report\" + 0.066*\"win\" + 0.045*\"home\" + 0.033*\"services\" + 0.028*\"year\" + 0.027*\"tourism\" + 0.027*\"market\" + 0.026*\"business\" + 0.026*\"land\" + 0.020*\"adelaide\""
+    ],
+    [
+      11,
+      "0.096*\"boost\" + 0.051*\"changes\" + 0.040*\"tour\" + 0.039*\"first\" + 0.032*\"melbourne\" + 0.029*\"release\" + 0.027*\"terror\" + 0.026*\"make\" + 0.025*\"head\" + 0.025*\"dump\""
+    ],
+    [
+      12,
+      "0.096*\"water\" + 0.043*\"safety\" + 0.040*\"anti\" + 0.038*\"action\" + 0.028*\"battle\" + 0.028*\"french\" + 0.021*\"rights\" + 0.020*\"cleared\" + 0.020*\"weather\" + 0.019*\"restrictions\""
+    ],
+    [
+      13,
+      "0.065*\"fears\" + 0.050*\"regional\" + 0.028*\"injury\" + 0.025*\"leader\" + 0.025*\"canberra\" + 0.025*\"planned\" + 0.024*\"named\" + 0.024*\"closure\" + 0.021*\"city\" + 0.020*\"spark\""
+    ],
+    [
+      14,
+      "0.059*\"record\" + 0.048*\"chief\" + 0.047*\"trial\" + 0.043*\"rail\" + 0.039*\"hit\" + 0.037*\"go\" + 0.033*\"wants\" + 0.033*\"offer\" + 0.032*\"mine\" + 0.029*\"ahead\""
+    ],
+    [
+      15,
+      "0.066*\"crash\" + 0.051*\"car\" + 0.047*\"seeks\" + 0.044*\"high\" + 0.039*\"takes\" + 0.034*\"hits\" + 0.034*\"push\" + 0.030*\"expected\" + 0.029*\"highway\" + 0.028*\"residents\""
+    ],
+    [
+      16,
+      "0.105*\"may\" + 0.046*\"industry\" + 0.043*\"national\" + 0.041*\"house\" + 0.035*\"alp\" + 0.033*\"blaze\" + 0.030*\"rates\" + 0.030*\"prison\" + 0.024*\"india\" + 0.022*\"baghdad\""
+    ],
+    [
+      17,
+      "0.106*\"claims\" + 0.053*\"south\" + 0.046*\"world\" + 0.044*\"strike\" + 0.032*\"cup\" + 0.031*\"nz\" + 0.030*\"staff\" + 0.028*\"offers\" + 0.027*\"track\" + 0.026*\"perth\""
+    ],
+    [
+      18,
+      "0.106*\"plan\" + 0.061*\"call\" + 0.058*\"qld\" + 0.058*\"hospital\" + 0.041*\"act\" + 0.040*\"wins\" + 0.025*\"bid\" + 0.021*\"park\" + 0.020*\"interest\" + 0.020*\"terrorism\""
+    ],
+    [
+      19,
+      "0.170*\"govt\" + 0.066*\"nsw\" + 0.054*\"pm\" + 0.044*\"wa\" + 0.033*\"denies\" + 0.025*\"urged\" + 0.024*\"urges\" + 0.024*\"research\" + 0.021*\"hold\" + 0.020*\"defence\""
+    ],
+    [
+      20,
+      "0.064*\"urged\" + 0.059*\"set\" + 0.045*\"abuse\" + 0.045*\"centre\" + 0.043*\"case\" + 0.040*\"take\" + 0.037*\"dead\" + 0.035*\"injured\" + 0.031*\"british\" + 0.028*\"west\""
+    ],
+    [
+      21,
+      "0.082*\"health\" + 0.063*\"minister\" + 0.059*\"deal\" + 0.055*\"calls\" + 0.044*\"service\" + 0.032*\"new\" + 0.028*\"move\" + 0.027*\"price\" + 0.026*\"threat\" + 0.025*\"rate\""
+    ],
+    [
+      22,
+      "0.087*\"fire\" + 0.050*\"power\" + 0.045*\"defends\" + 0.040*\"china\" + 0.040*\"fight\" + 0.038*\"continue\" + 0.036*\"protest\" + 0.028*\"uni\" + 0.023*\"tax\" + 0.022*\"makes\""
+    ],
+    [
+      23,
+      "0.060*\"labor\" + 0.050*\"ban\" + 0.048*\"public\" + 0.043*\"concerns\" + 0.039*\"farmers\" + 0.036*\"future\" + 0.036*\"consider\" + 0.031*\"told\" + 0.030*\"council\" + 0.027*\"housing\""
+    ],
+    [
+      24,
+      "0.091*\"back\" + 0.052*\"test\" + 0.048*\"top\" + 0.042*\"day\" + 0.041*\"bomb\" + 0.030*\"one\" + 0.029*\"bank\" + 0.028*\"kills\" + 0.028*\"rain\" + 0.025*\"stay\""
+    ],
+    [
+      25,
+      "0.079*\"funds\" + 0.049*\"nt\" + 0.047*\"rejects\" + 0.044*\"community\" + 0.040*\"election\" + 0.035*\"meeting\" + 0.023*\"put\" + 0.022*\"kill\" + 0.022*\"challenge\" + 0.021*\"zimbabwe\""
+    ],
+    [
+      26,
+      "0.078*\"group\" + 0.061*\"workers\" + 0.046*\"get\" + 0.043*\"woman\" + 0.041*\"dies\" + 0.039*\"return\" + 0.030*\"cut\" + 0.025*\"show\" + 0.024*\"aussie\" + 0.024*\"rules\""
+    ],
+    [
+      27,
+      "0.055*\"sydney\" + 0.052*\"open\" + 0.032*\"seek\" + 0.031*\"laws\" + 0.028*\"title\" + 0.023*\"reports\" + 0.023*\"waste\" + 0.023*\"hill\" + 0.023*\"drought\" + 0.021*\"al\""
+    ],
+    [
+      28,
+      "0.197*\"police\" + 0.056*\"probe\" + 0.039*\"support\" + 0.035*\"gold\" + 0.031*\"coast\" + 0.028*\"second\" + 0.028*\"begins\" + 0.028*\"investigate\" + 0.026*\"opposition\" + 0.025*\"jail\""
+    ],
+    [
+      29,
+      "0.065*\"help\" + 0.065*\"olympic\" + 0.047*\"indigenous\" + 0.044*\"continues\" + 0.043*\"port\" + 0.036*\"time\" + 0.035*\"england\" + 0.032*\"despite\" + 0.029*\"attacks\" + 0.028*\"care\""
+    ]
+  ],
+  "empty_topics": []
+}

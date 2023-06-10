@@ -16,6 +16,9 @@ def retrieve_all_posts_texts(n):
 # Sample document set
 documents = retrieve_all_posts_texts(100)
 
+# Our topic atlas
+topic_atlas = []
+
 # Generate LDA model for each document in document set
 for doc in documents:
     # Preprocess the documents by tokenizing and removing stopwords
@@ -32,7 +35,7 @@ for doc in documents:
     # Build the LDA model
     num_topics = 1
     lda_model = gensim.models.LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topics)
-    
-    # Print the topics and their corresponding words
-    for idx, topic in lda_model.print_topics():
-        print(f'Topic #{idx}: {topic}')
+
+    # Get the actual topic
+    topics = lda_model.show_topics(-1, formatted=False)[1]
+    topic_atlas.append(topics)

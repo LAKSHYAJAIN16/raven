@@ -1,0 +1,7 @@
+PSEUDO CODE
+
+calculate word2vec for each word
+calculate the delta between each word
+words which are similiar (have a delta less than the similarity coefficient) are grouped together
+each word pair is assigned a similarity coefficient
+the wordpairs with the least similarity can be assigned different topics

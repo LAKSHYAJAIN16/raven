@@ -58,4 +58,4 @@ def main(instance, n):
     print("INSTANCE",instance,"DONE")
     main(instance + 10, n + 10000)
 
-main(40,40000)
+main(60,60000)

@@ -80,7 +80,9 @@ def main(n, k):
 
     topics = lda_model.show_topics(num_topics=-1)
     perplexity = lda_model.log_perplexity(corpus)
-    lda_model.save(create_model_fp(len(documents), num_topics))
+
+    # disable model save
+    # lda_model.save(create_model_fp(len(documents), num_topics))
 
     # now, find the number of empty topics (i.e all probs are zero)
     empty_topics = []
@@ -115,11 +117,11 @@ def main(n, k):
     print("PERPLEXITY", perplexity)
 
 
-MAX_N = 100000
-MAX_K = 150
-MIN_N = 5000
-MIN_K = 10
-K_STEP = 10
+MAX_N = 1000000
+MAX_K = 50
+MIN_N = 100000
+MIN_K = 5
+K_STEP = 5
 N_STEP = 10000
 nn = MIN_N
 
