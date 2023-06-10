@@ -1,0 +1,47 @@
+{
+  "meta": { "nDocuments": 35000, "dataset": "Million News Headlines", "k": 10 },
+  "topics": [
+    [
+      0,
+      "0.022*\"water\" + 0.013*\"rise\" + 0.010*\"plan\" + 0.010*\"govt\" + 0.010*\"group\" + 0.009*\"teachers\" + 0.008*\"hope\" + 0.008*\"new\" + 0.008*\"council\" + 0.007*\"housing\""
+    ],
+    [
+      1,
+      "0.029*\"man\" + 0.024*\"court\" + 0.017*\"police\" + 0.017*\"face\" + 0.013*\"workers\" + 0.012*\"charges\" + 0.011*\"sydney\" + 0.010*\"trial\" + 0.010*\"sex\" + 0.010*\"murder\""
+    ],
+    [
+      2,
+      "0.014*\"help\" + 0.013*\"boost\" + 0.012*\"plans\" + 0.011*\"top\" + 0.011*\"council\" + 0.011*\"fight\" + 0.010*\"aussies\" + 0.010*\"seeks\" + 0.010*\"centre\" + 0.009*\"funds\""
+    ],
+    [
+      3,
+      "0.026*\"police\" + 0.019*\"probe\" + 0.018*\"world\" + 0.017*\"wins\" + 0.016*\"tour\" + 0.013*\"cup\" + 0.013*\"decision\" + 0.011*\"govt\" + 0.009*\"first\" + 0.008*\"education\""
+    ],
+    [
+      4,
+      "0.018*\"car\" + 0.013*\"child\" + 0.012*\"airport\" + 0.011*\"dies\" + 0.011*\"hit\" + 0.011*\"leader\" + 0.010*\"man\" + 0.009*\"show\" + 0.009*\"trade\" + 0.009*\"police\""
+    ],
+    [
+      5,
+      "0.022*\"concerns\" + 0.018*\"solomons\" + 0.015*\"act\" + 0.012*\"police\" + 0.012*\"industry\" + 0.011*\"changes\" + 0.011*\"missing\" + 0.010*\"union\" + 0.009*\"aussie\" + 0.009*\"found\""
+    ],
+    [
+      6,
+      "0.019*\"govt\" + 0.019*\"council\" + 0.013*\"takes\" + 0.013*\"rejects\" + 0.012*\"test\" + 0.012*\"blast\" + 0.011*\"british\" + 0.011*\"deal\" + 0.009*\"plan\" + 0.009*\"new\""
+    ],
+    [
+      7,
+      "0.048*\"us\" + 0.021*\"says\" + 0.019*\"iraq\" + 0.017*\"urged\" + 0.016*\"talks\" + 0.015*\"pm\" + 0.011*\"govt\" + 0.010*\"north\" + 0.009*\"korea\" + 0.009*\"troops\""
+    ],
+    [
+      8,
+      "0.025*\"killed\" + 0.018*\"get\" + 0.014*\"power\" + 0.013*\"three\" + 0.012*\"death\" + 0.012*\"future\" + 0.011*\"budget\" + 0.010*\"bus\" + 0.009*\"toll\" + 0.009*\"beattie\""
+    ],
+    [
+      9,
+      "0.019*\"win\" + 0.012*\"open\" + 0.012*\"lead\" + 0.012*\"title\" + 0.009*\"bush\" + 0.009*\"strike\" + 0.009*\"hopes\" + 0.008*\"school\" + 0.008*\"final\" + 0.008*\"force\""
+    ]
+  ],
+  "empty_amount": 0,
+  "empty_topics": []
+}
