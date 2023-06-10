@@ -116,7 +116,7 @@ def main(n, k):
 
 
 MAX_N = 100000
-MAX_K = 100
+MAX_K = 150
 MIN_N = 5000
 MIN_K = 10
 K_STEP = 10
