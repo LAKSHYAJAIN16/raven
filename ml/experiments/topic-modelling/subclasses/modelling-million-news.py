@@ -3,7 +3,7 @@ from bertopic import BERTopic
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-INSTANCE="100k"
+INSTANCE="20k"
 stop_words = set(stopwords.words('english'))
 
 def create_fp(index):
@@ -11,7 +11,7 @@ def create_fp(index):
 
 def retrieve_all_posts_texts():
     data = pd.read_csv(r'D:\Projects\v3\raven\ml\experiments\topic-modelling\data\abcnews-date-text.csv')
-    docs = data["headline_text"][:100000]
+    docs = data["headline_text"][:20000]
     ret = []
     i = 0
     for x in docs:
