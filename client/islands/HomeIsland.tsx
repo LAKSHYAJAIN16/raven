@@ -6,22 +6,18 @@ import moment from "moment";
 import UserData from "../components/UserData";
 import { createHelia } from "helia";
 import { Strings, strings } from "@helia/strings";
+import { buffer } from "stream/consumers";
+import ReccomendationManager from "../components/ReccomendationManager";
 
 const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
   const [feed, setFeed] = useState<any[]>([]);
-  const [heliaNode, setHeliaNode] = useState<Strings | null>(null);
 
   useEffect(() => {
     const fn = async () => {
       // backend call
-      // const dat = await axios.get(backendURL + "/get/posts");
-      // const actPosts = dat.data.data;
-      // setFeed(actPosts);
-      // console.log(actPosts);
-      // helia
-      // const n = await createHelia();
-      // const s = strings(n);
-      // setHeliaNode(s);
+      const dat = await axios.get(backendURL + "/get/posts");
+      const actPosts = dat.data.data;
+      setFeed(actPosts);
     };
     fn();
   }, []);
@@ -46,10 +42,13 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
 
         // Now, send request to our server (TODO : just do it in python man wtf)
         const new_payload = {
-          id : object._id,
-          embeddings : embeddings,
-        }
-        const res2 = await axios.post(`${backendURL}/create/embedding`, new_payload);
+          id: object._id,
+          embeddings: embeddings,
+        };
+        const res2 = await axios.post(
+          `${backendURL}/create/embedding`,
+          new_payload
+        );
         console.log(res2);
         isBuffer = false;
         removeBuffer(payload.id);
@@ -398,16 +397,6 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
   };
 
   const heartOrFirePost = async (post, action: number) => {
-    // Save it to our user data object (localStorage)
-    const localObject = {
-      n: post.text,
-      l: 1,
-      t: Date.now(),
-    };
-    const data: any[] = JSON.parse(localStorage.getItem("u-data") || "[]");
-    data.push(localObject);
-    localStorage.setItem("u-data", JSON.stringify(data));
-
     // Register backend (simply as a number, not actual data)
     const obj = {
       id: post["_id"],
@@ -416,45 +405,32 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     };
 
     const res = await axios.post(backendURL + "/create/heart-fire", obj);
-    console.log(res);
+    console.log(res.data);
+
+    // Get Embeddings so we can register it on graph
+    const graphPayload = {
+      id: post["_id"],
+    };
+
+    const res2 = await axios.post(backendURL + "/get/embeddings", graphPayload);
+    console.log(res2.data);
+
+    const n_payload = {
+      embeddings : res2.data.data.embeddings,
+      text : post["text"],
+      toc : Date.now(),
+      popularity : res.data.data.hearts.length + res.data.data.images.length
+    }
+
+    // Send that payload to our reccomendation manager
+    ReccomendationManager.init();
+    ReccomendationManager.add_embeddings(n_payload);
+    await ReccomendationManager.chroma_predict();
   };
 
   return (
     <div>
-      <div className="flex justify-center mt-10 ">
-        {/* Render all of our posts */}
-        <div>
-          {buffers.map((e) => (
-            // <a href={`/h/post/${e._id}`}>
-            <div className="mt-5">
-              {e.type === 0 && (
-                <TextPost
-                  object={e}
-                  heartOrFireCallback={heartOrFirePost}
-                  isBuffer={!e.isProcessed}
-                />
-              )}
-              {e.type === 1 && (
-                <ImgPost
-                  object={e}
-                  heartOrFireCallback={heartOrFirePost}
-                  isBuffer={!e.isProcessed}
-                />
-              )}
-              {e.type === 2 && (
-                <VidPost
-                  object={e}
-                  heartOrFireCallback={heartOrFirePost}
-                  isBuffer={!e.isProcessed}
-                />
-              )}
-            </div>
-            // </a>
-          ))}
-        </div>
-      </div>
-
-      {feed.length === 0 ? (
+      {feed.length === 0 && buffers.length === 0? (
         <div className="flex justify-center items-center mt-3">
           <Loader size={1} />
         </div>
@@ -462,6 +438,33 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
         <div className="flex justify-center mt-10 ">
           {/* Render all of our posts */}
           <div>
+            {buffers.map((e) => (
+              // <a href={`/h/post/${e._id}`}>
+              <div className="mt-5">
+                {e.type === 0 && (
+                  <TextPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={!e.isProcessed}
+                  />
+                )}
+                {e.type === 1 && (
+                  <ImgPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={!e.isProcessed}
+                  />
+                )}
+                {e.type === 2 && (
+                  <VidPost
+                    object={e}
+                    heartOrFireCallback={heartOrFirePost}
+                    isBuffer={!e.isProcessed}
+                  />
+                )}
+              </div>
+              // </a>
+            ))}
             {feed.map((e) => (
               // <a href={`/h/post/${e._id}`}>
               <div className="mt-5">

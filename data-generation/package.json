@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "chatgpt": "node chatgpt.js",
+    "twitter" : "node twitter.js"
   },
   "keywords": [],
   "type": "module",
