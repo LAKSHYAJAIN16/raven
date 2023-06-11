@@ -148,8 +148,9 @@ const Verify: React.FC = () => {
       id: userIdentification,
       helia: helia_id,
     });
+    localStorage.removeItem("LIP_KIB")
     localStorage.setItem("___", helia_id);
-    localStorage.setItem("dat", ipfs_data_encrypted);
+    localStorage.setItem("dat", password_encrypted);
     window.location.replace("/h/home");
   }
 

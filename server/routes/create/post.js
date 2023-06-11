@@ -9,24 +9,30 @@ async function createPost(req, res) {
 
   //Get our OTP
   try {
+    if (
+      req.body.text === undefined ||
+      req.body.text === "" ||
+      req.body.text === null
+    )
+      throw SyntaxError();
     //Compile data from body
     const post = new Post({
-      user : req.body.user.name,
-      userID : req.body.user.id,
-      userPfpic : req.body.user.pfpic,
-      text : req.body.text,
-      type : req.body.type,
-      images : req.body.images || [],
-      videos : req.body.videos || [],
-      richText : req.body.richText || "",
-      md : req.body.md || "",
-      news : {
-        topic : req.body.news.topic || "",
-        desc : req.body.news.desc || ""
+      user: req.body.user.name,
+      userID: req.body.user.id,
+      userPfpic: req.body.user.pfpic,
+      text: req.body.text,
+      type: req.body.type,
+      images: req.body.images || [],
+      videos: req.body.videos || [],
+      richText: req.body.richText || "",
+      md: req.body.md || "",
+      news: {
+        topic: req.body.news.topic || "",
+        desc: req.body.news.desc || "",
       },
-      hearts : [],
-      fires : [],
-      comments : [],
+      hearts: [],
+      fires: [],
+      comments: [],
     });
 
     const act_post = await post.save();
@@ -37,7 +43,7 @@ async function createPost(req, res) {
   } catch (err) {
     res.json({
       code: 1,
-      error : err
+      error: err,
     });
   }
 }

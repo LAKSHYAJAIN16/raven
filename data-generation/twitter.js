@@ -50,7 +50,11 @@ file.on("line", async (line) => {
       const word = words[i];
       if (word.includes("@")) {
         continue;
-      } else {
+      }
+      if(word.includes("#")){
+        continue;
+      } 
+      else {
         n_text += word;
         n_text += " ";
       }
@@ -97,6 +101,7 @@ file.on("close", async () => {
         continue;
       // Now generate embeddings
       const embedding_url = `http://127.0.0.1:1010/embed?t=${n_text}&id=${res2.data.data._id}`;
+      console.log(embedding_url);
       const res3 = await axios.get(embedding_url);
 
       // Now, send this data to backend

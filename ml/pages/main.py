@@ -1,5 +1,8 @@
 import chromadb
-import json
+from chromadb.config import Settings
+import string
+import random
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from components.embed import embed_text, embedding_fn
@@ -9,7 +12,11 @@ app = Flask(__name__)
 CORS(app)
 
 # init chroma
-chroma_client = chromadb.Client()
+chroma_client = chromadb.Client(Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory=os.path.basename("D:\Projects\v3\raven\data")
+))
+
 embedding_function = embedding_fn()
 collection = chroma_client.create_collection(
     name="posts", embedding_function=embedding_function)
@@ -21,15 +28,22 @@ def home():
 
 @app.route("/embed")
 def embed():
+    id = ""
     # first, embed text
     dat = request.args.to_dict()
     txt = dat["t"]
+    try:
+        id = dat["id"]
+    except:
+        id = ''.join(random.choices(string.ascii_uppercase +
+                             string.digits, k=20))
+    
+    print(txt)
     embeddings = embed_text(txt, embedding_function)
-    print(len(embeddings))
     
     # now, add to chroma
     collection.add(
-        ids=[dat["id"]],
+        ids=id,
         documents=[txt],
         embeddings=embeddings
     )
