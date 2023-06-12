@@ -17,9 +17,13 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
       // backend call
       const dat = await axios.get(backendURL + "/get/posts");
       const actPosts = dat.data.data;
-      actPosts.length = 100
+      actPosts.length = 200
       console.log(actPosts);
       setFeed(actPosts);
+
+      // Set Up reccomendation engine!
+      // ReccomendationManager.init();
+      // await ReccomendationManager.chroma_predict();
     };
     fn();
   }, []);
