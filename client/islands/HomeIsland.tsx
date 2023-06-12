@@ -8,6 +8,7 @@ import { createHelia } from "helia";
 import { Strings, strings } from "@helia/strings";
 import { buffer } from "stream/consumers";
 import ReccomendationManager from "../components/ReccomendationManager";
+import gradients from "../lib/gradients";
 
 const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
   const [feed, setFeed] = useState<any[]>([]);
@@ -436,12 +437,22 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
 
   return (
     <div>
+      {/* Topic Headers */}
+      <div className="sticky top-0 flex justify-center mb-0">
+        <div className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}>
+          <p className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}>taylor swift</p>
+        </div>
+        <div className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}>
+          <p className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}>lol</p>
+        </div>
+      </div>
+      {/* Feed */}
       {feed.length === 0 && buffers.length === 0? (
         <div className="flex justify-center items-center mt-3">
           <Loader size={1} />
         </div>
       ) : (
-        <div className="flex justify-center mt-10 ">
+        <div className="flex justify-center mt-1 ">
           {/* Render all of our posts */}
           <div>
             {buffers.map((e) => (

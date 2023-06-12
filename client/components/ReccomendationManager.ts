@@ -1,7 +1,6 @@
 import { createHelia } from "helia";
 import { strings } from "@helia/strings";
 import { createCipher } from "crypto";
-import { KMEANS } from "density-clustering";
 import axios from "axios";
 import UserData from "./UserData";
 import { backendURL } from "../settings";
@@ -20,12 +19,11 @@ export default class ReccomendationManager {
     );
     const helia_id = localStorage.getItem("___");
     const pass = localStorage.getItem("dat");
-    const centroids = JSON.parse(localStorage.getItem("centroids") || "[]");
 
     this.N_EMBEDDINGS = n_embeddings;
     this.HELIA_ID = helia_id || "";
     this.E_PASSWORD = pass || "";
-    UserMLProfile.init(centroids);
+    UserMLProfile.init(n_embeddings);
   };
 
   static add_embeddings = async (payload) => {
@@ -164,26 +162,14 @@ export default class ReccomendationManager {
 }
 
 export class UserMLProfile {
-  static centroids: number[] = [];
-  static algo: KMEANS;
+  static N_DOCS : any[] = [];
 
-  static init = (m_centroids: number[]) => {
-    this.centroids = m_centroids;
-    this.algo = new KMEANS();
-    if (
-      m_centroids.length === 0 &&
-      ReccomendationManager.N_EMBEDDINGS.length >= 1
-    ) {
-      this.reCalculateCentroids();
-    }
-  };
+  static init = (docs : any[]) => {
+    this.N_DOCS = docs;
+  }
 
-  static reCalculateCentroids() {
-    const clusters: number[][] = this.algo.run(
-      ReccomendationManager.remove_embedding_metadata(),
-      3
-    );
-    console.log(clusters);
-    console.log(ReccomendationManager.only_embedding_meta_data());
+  static run = () => {
+    // First, perform some basic tokenization and stop word elimination
+    
   }
 }

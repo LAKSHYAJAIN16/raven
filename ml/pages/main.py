@@ -4,6 +4,7 @@ import string
 import random
 import os
 import math
+from rake_nltk import Rake
 from chromadb.config import Settings
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
@@ -18,10 +19,12 @@ chroma_client = chromadb.Client(Settings(
     chroma_db_impl="duckdb+parquet",
     persist_directory=os.path.basename("D:\Projects\v3\raven\data")
 ))
-
 embedding_function = embedding_fn()
 collection = chroma_client.create_collection(
     name="posts", embedding_function=embedding_function)
+
+# init rake
+r = Rake()
 
 
 @app.route("/")
@@ -33,6 +36,7 @@ def home():
 @app.route("/embed")
 def embed():
     id = ""
+
     # first, embed text
     dat = request.args.to_dict()
     txt = dat["t"]
@@ -41,8 +45,6 @@ def embed():
     except:
         id = ''.join(random.choices(string.ascii_uppercase +
                                     string.digits, k=20))
-
-    print(txt)
     embeddings = embed_text(txt, embedding_function)
 
     # now, add to chroma
@@ -52,7 +54,10 @@ def embed():
         embeddings=embeddings
     )
 
-    return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings})
+    # We also need to convert it into keywords
+    r.extract_keywords_from_text(txt)
+    keys = r.get_ranked_phrases()
+    return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings, "keywords": keys})
 
 
 @app.route("/query/byEmbeddings", methods=["POST"])
@@ -69,7 +74,7 @@ def byEmbeddings():
             n_results=math.floor(dat["n"]["embeddings"]*m["weight"])
         )
         embed_results.append(res)
-    
+
     # Then, our weighted centre
     res2 = collection.query(
         query_embeddings=[dat["centre"]],
@@ -78,7 +83,7 @@ def byEmbeddings():
     exec_time = time.time() - start_time
     result = {
         "centre": res2,
-        "embedding_single" : embed_results,
+        "embedding_single": embed_results,
         "exec_time": exec_time,
     }
     return jsonify(result)
