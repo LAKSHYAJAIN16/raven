@@ -183,37 +183,25 @@ export class UserMLProfile {
       const words = this.N_DOCS[i]["text"].split(" ");
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
-        if(Object.keys(map).includes(word)){
+        if (Object.keys(map).includes(word)) {
           map[word] += 1;
-        }
-        else{
+        } else {
           map[word] = 1;
         }
       }
     }
 
-    // // Now, we gotta sort lmao
-    const F = Object.keys(map).length;
-    let ret = [];
-    let m_keys = Object.keys(map);
-    for (let i = 0; i < F; i++) {
-      let max = 0;
-      let max_key = "";
-      // loop again
-      for (let k = 0; k < m_keys.length; k++) {
-        const key2 = m_keys[k];
-        if(map[key2] > max){
-          max = map[key2];
-          max_key = key2;
-        }
-      }
-
-      ret.push({key : max_key, n : max});
-      m_keys.splice(m_keys.indexOf(max_key), 1);
+    // Sort lmao
+    let sortable = [];
+    for (var x in map) {
+      sortable.push([x, map[x]]);
     }
 
-    console.log(ret);
-    // console.log(Object.keys(map));
-    return map
-  }
+    sortable.sort(function (a, b) {
+      return a[1] - b[1];
+    });
+
+    console.log(sortable);
+    return map;
+  };
 }
