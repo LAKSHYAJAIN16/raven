@@ -4,6 +4,7 @@
     "server": "cd server && npm start",
     "data-ai" : "cd data-generation && npm run chatgpt",
     "twitter" : "cd data-generation && npm run twitter",
+    "blog-data" : "cd data-generation && npm run blog",
     "git" : "git add . && git commit -m 'lol' && git push",
     "ml" : "C:/Users/GAMING/AppData/Local/Programs/Python/Python310/python.exe d:/Projects/v3/raven/ml/pages/main.py"
   }

@@ -29,7 +29,11 @@ export default class ReccomendationManager {
   static add_embeddings = async (payload) => {
     // Calculate weight of point
     const weight = this.calculate_weight(payload);
-    this.N_EMBEDDINGS.push({ ...payload, weight: weight });
+    this.N_EMBEDDINGS.push({
+      ...payload,
+      weight: weight,
+      embeddings: payload.embeddings,
+    });
     this.save_json();
 
     // We need to add the data to ipfs, so init a helia node
@@ -162,14 +166,54 @@ export default class ReccomendationManager {
 }
 
 export class UserMLProfile {
-  static N_DOCS : any[] = [];
+  static N_DOCS: any[] = [];
 
-  static init = (docs : any[]) => {
+  static init = (docs: any[]) => {
     this.N_DOCS = docs;
-  }
+    this.most_frequent();
+  };
 
   static run = () => {
     // First, perform some basic tokenization and stop word elimination
-    
+  };
+
+  static most_frequent = () => {
+    const map = {};
+    for (let i = 0; i < this.N_DOCS.length; i++) {
+      const words = this.N_DOCS[i]["text"].split(" ");
+      for (let k = 0; k < words.length; k++) {
+        const word = words[k];
+        if(Object.keys(map).includes(word)){
+          map[word] += 1;
+        }
+        else{
+          map[word] = 1;
+        }
+      }
+    }
+
+    // // Now, we gotta sort lmao
+    const F = Object.keys(map).length;
+    let ret = [];
+    let m_keys = Object.keys(map);
+    for (let i = 0; i < F; i++) {
+      let max = 0;
+      let max_key = "";
+      // loop again
+      for (let k = 0; k < m_keys.length; k++) {
+        const key2 = m_keys[k];
+        if(map[key2] > max){
+          max = map[key2];
+          max_key = key2;
+        }
+      }
+
+      ret.push({key : max_key, n : max});
+      m_keys.splice(m_keys.indexOf(max_key), 1);
+    }
+
+    console.log(ret);
+    // console.log(Object.keys(map));
+    return map
   }
 }

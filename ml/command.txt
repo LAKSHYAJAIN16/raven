@@ -1,1 +1,3 @@
-C:/Users/GAMING/AppData/Local/Programs/Python/Python310/python.exe -m flask --app D:\Projects\v3\raven\ml\embeddings\chroma.py run --port 6969
+version https://git-lfs.github.com/spec/v1
+oid sha256:bbef7a87a861b197183e947af34464ac1df113fe5141ff3c1fe05586f67829e4
+size 142
