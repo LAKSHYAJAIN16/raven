@@ -4,7 +4,8 @@ import string
 import random
 import os
 import math
-from rake_nltk import Rake
+from nltk import word_tokenize, pos_tag, RegexpParser
+from nltk.corpus import stopwords
 from chromadb.config import Settings
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
@@ -23,9 +24,12 @@ embedding_function = embedding_fn()
 collection = chroma_client.create_collection(
     name="posts", embedding_function=embedding_function)
 
-# init rake
-r = Rake()
-
+# init nltk
+grammar = """
+    NP: {<DT|PRP\$>?<JJ.*>*<NN.*>+}       # chunk determiner (optional), adjectives (optional), and one or more nouns
+"""
+stop_words = set(stopwords.words('english'))
+cp = RegexpParser(grammar)
 
 @app.route("/")
 @cross_origin()
@@ -55,9 +59,33 @@ def embed():
     )
 
     # We also need to convert it into keywords
-    r.extract_keywords_from_text(txt)
-    keys = r.get_ranked_phrases()
-    return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings, "keywords": keys})
+    tokens = word_tokenize(txt)
+    filtered_sentence = [w for w in tokens if not w.lower() in stop_words]
+    tag = pos_tag(filtered_sentence)
+    result = cp.parse(tag)
+
+    # Parse result so we only get nouns and noun phrases
+    return_res = []
+    for k in range(len(result) - 1):
+        if type(result[k][0]) == str:
+            pos = result[k][1]
+            if pos == "NNP" or pos == "VBG" or pos == "NN":
+                return_res.append(result[k][0])
+        else:
+            s = ""
+            for f in range(len(result[k]) - 1):
+                pos = result[k][f][1]
+                if pos == "NN" or pos == "VBG":
+                    return_res.append(result[k][f][0])
+                elif pos == "NNP":
+                    s += result[k][f][0]
+                    s += " "
+
+            if len(s) != 0:
+                return_res.append(s)
+            
+
+    return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings, "keywords": return_res})
 
 
 @app.route("/query/byEmbeddings", methods=["POST"])

@@ -3,6 +3,7 @@
     "client": "cd client && npm run dev",
     "server": "cd server && npm start",
     "data-ai" : "cd data-generation && npm run chatgpt",
+    "data-ai-2" : "cd data-generation && npm run chatgpt-2",
     "twitter" : "cd data-generation && npm run twitter",
     "blog-data" : "cd data-generation && npm run blog",
     "git" : "git add . && git commit -m 'lol' && git push",

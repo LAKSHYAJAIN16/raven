@@ -2,7 +2,7 @@ import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import axios from "axios";
 
-const NUM_OF_AGENTS = 10;
+const NUM_OF_AGENTS = 20;
 let clients = [];
 
 async function generateUser() {

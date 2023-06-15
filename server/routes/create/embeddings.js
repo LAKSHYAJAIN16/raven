@@ -14,6 +14,7 @@ async function createEmbedding(req, res) {
     const embedding = new Embedding({
       _id : req.body.id,
       embeddings : req.body.embeddings,
+      pos : req.body.pos,
     }, {
       _id : req.body.id
     });

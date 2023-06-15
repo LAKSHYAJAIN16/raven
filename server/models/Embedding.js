@@ -9,6 +9,9 @@ const Embedding = new mongoose.Schema(
     post_id : {
         type : String,
         required : true,
+    },
+    pos : {
+      type : [],
     }
   },
   { timestamps: true }

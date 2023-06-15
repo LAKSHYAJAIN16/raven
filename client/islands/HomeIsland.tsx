@@ -1,5 +1,6 @@
 import React, { useEffect, useState, FC, useRef } from "react";
 import axios from "axios";
+import { stringify } from "querystring";
 import { backendURL, mlURL } from "../settings";
 import Loader from "../components/Loader";
 import moment from "moment";
@@ -18,7 +19,7 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
       // backend call
       const dat = await axios.get(backendURL + "/get/posts");
       const actPosts = dat.data.data;
-      actPosts.length = 200
+      actPosts.length = 100;
       console.log(actPosts);
       setFeed(actPosts);
 
@@ -45,12 +46,13 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
 
         // Get the embeddings
         const embeddings = res.data.embeddings[0];
-        // console.log(embeddings);
+        const pos = res.data.keywords;
 
         // Now, send request to our server (TODO : just do it in python man wtf)
         const new_payload = {
           id: object._id,
           embeddings: embeddings,
+          pos : pos,
         };
         const res2 = await axios.post(
           `${backendURL}/create/embedding`,
@@ -423,11 +425,12 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     console.log(res2.data);
 
     const n_payload = {
-      embeddings : res2.data.data.embeddings,
-      text : post["text"],
-      toc : Date.now(),
-      popularity : res.data.data.hearts.length + res.data.data.images.length
-    }
+      embeddings: res2.data.data.embeddings,
+      pos : res2.data.data.pos,
+      text: post["text"],
+      toc: Date.now(),
+      popularity: res.data.data.hearts.length + res.data.data.images.length,
+    };
 
     // Send that payload to our reccomendation manager
     ReccomendationManager.init();
@@ -439,15 +442,27 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     <div>
       {/* Topic Headers */}
       <div className="sticky top-0 flex justify-center mb-0">
-        <div className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}>
-          <p className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}>taylor swift</p>
+        <div
+          className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}
+        >
+          <p
+            className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}
+          >
+            taylor swift
+          </p>
         </div>
-        <div className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}>
-          <p className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}>lol</p>
+        <div
+          className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}
+        >
+          <p
+            className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}
+          >
+            lol
+          </p>
         </div>
       </div>
       {/* Feed */}
-      {feed.length === 0 && buffers.length === 0? (
+      {feed.length === 0 && buffers.length === 0 ? (
         <div className="flex justify-center items-center mt-3">
           <Loader size={1} />
         </div>

@@ -201,6 +201,8 @@ export class UserMLProfile {
       return a[1] - b[1];
     });
 
+    sortable.reverse();
+    sortable.length = 30;
     console.log(sortable);
     return map;
   };

@@ -6,7 +6,8 @@
   "scripts": {
     "chatgpt": "node chatgpt.js",
     "twitter" : "node twitter.js",
-    "blog" : "node en-us-blogs.js"
+    "blog" : "node en-us-blogs.js",
+    "chatgpt-2" : "node chatgpt-2.js"
   },
   "keywords": [],
   "type": "module",
