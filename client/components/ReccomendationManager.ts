@@ -177,10 +177,10 @@ export class UserMLProfile {
     // First, perform some basic tokenization and stop word elimination
   };
 
-  static most_frequent = () => {
+  static most_frequent = (n = 5) => {
     const map = {};
     for (let i = 0; i < this.N_DOCS.length; i++) {
-      const words = this.N_DOCS[i]["text"].split(" ");
+      const words = this.N_DOCS[i]["pos"]
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
         if (Object.keys(map).includes(word)) {
@@ -202,8 +202,7 @@ export class UserMLProfile {
     });
 
     sortable.reverse();
-    sortable.length = 30;
-    console.log(sortable);
-    return map;
+    sortable.length = n;
+    return sortable;
   };
 }

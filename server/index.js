@@ -14,6 +14,7 @@ const deletePosts = require("./routes/delete/posts");
 const algorithm = require("./routes/get/algorithm");
 const createEmbedding = require("./routes/create/embeddings");
 const getEmbedding = require("./routes/get/embeddings");
+const deleteEmbeddings = require("./routes/delete/embeddings");
 
 dotenv.config();
 const app = express();
@@ -64,6 +65,10 @@ app.post("/get/embeddings", async(req, res) => {
 app.get("/del/posts", async(req, res) => {
   await deletePosts(req, res);
 })
+
+app.get("/del/embeddings", async(req, res) => {
+  await deleteEmbeddings(req, res);
+});
 
 app.get("/get/algorithm", async(req, res) => {
   await algorithm(req, res);

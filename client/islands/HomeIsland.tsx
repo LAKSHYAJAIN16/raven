@@ -8,11 +8,15 @@ import UserData from "../components/UserData";
 import { createHelia } from "helia";
 import { Strings, strings } from "@helia/strings";
 import { buffer } from "stream/consumers";
-import ReccomendationManager from "../components/ReccomendationManager";
+import ReccomendationManager, {
+  UserMLProfile,
+} from "../components/ReccomendationManager";
 import gradients from "../lib/gradients";
 
 const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
   const [feed, setFeed] = useState<any[]>([]);
+  const [keywords, setKeywords] = useState<any[]>([]);
+  const [selectedKeywords, setSelectedKeywords] = useState<any[]>([]);
 
   useEffect(() => {
     const fn = async () => {
@@ -24,8 +28,13 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
       setFeed(actPosts);
 
       // Set Up reccomendation engine!
-      // ReccomendationManager.init();
-      // await ReccomendationManager.chroma_predict();
+      ReccomendationManager.init();
+      setKeywords(UserMLProfile.most_frequent());
+
+      // Lib XD
+      Array.prototype.random = function () {
+        return this[Math.floor(Math.random() * this.length)];
+      };
     };
     fn();
   }, []);
@@ -52,7 +61,7 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
         const new_payload = {
           id: object._id,
           embeddings: embeddings,
-          pos : pos,
+          pos: pos,
         };
         const res2 = await axios.post(
           `${backendURL}/create/embedding`,
@@ -422,11 +431,11 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     };
 
     const res2 = await axios.post(backendURL + "/get/embeddings", graphPayload);
-    console.log(res2.data);
+    console.log(res2.data.data);
 
     const n_payload = {
       embeddings: res2.data.data.embeddings,
-      pos : res2.data.data.pos,
+      pos: res2.data.data.pos,
       text: post["text"],
       toc: Date.now(),
       popularity: res.data.data.hearts.length + res.data.data.images.length,
@@ -438,28 +447,91 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     await ReccomendationManager.chroma_predict();
   };
 
+  const selectKeyword = (keyword, idx) => {
+    // Add to selected Keywords
+    const s_keywords = [...selectedKeywords];
+    s_keywords.push(keyword);
+    setSelectedKeywords(s_keywords);
+
+    // Remove from keywords
+    const n_keywords = [...keywords];
+    for (let k = 0; k < keywords.length; k++) {
+      const ke = keywords[k];
+      if (ke[0] === keyword[0]) {
+        n_keywords.splice(n_keywords.indexOf(ke), 1);
+        break;
+      }
+    }
+
+    // If the length of our keywords is zero, add some docs
+    if(n_keywords.length === 0){
+      const n_docs = UserMLProfile.most_frequent(s_keywords.length + 1).splice(s_keywords.length);
+      setKeywords(n_docs);
+    }
+    else{
+      setKeywords(n_keywords);
+    }
+  };
+
+  const deSelectKeyword = (keyword, idx) => {
+    // Add to Keywords
+    const s_keywords = [...keywords];
+    s_keywords.push(keyword);
+    setKeywords(s_keywords.reverse());
+
+    // Remove from Selected keywords
+    const n_keywords = [...selectedKeywords];
+    for (let k = 0; k < selectedKeywords.length; k++) {
+      const ke = selectedKeywords[k];
+      if (ke[0] === keyword[0]) {
+        n_keywords.splice(n_keywords.indexOf(ke), 1);
+        break;
+      }
+    }
+    setSelectedKeywords(n_keywords);
+  };
+
   return (
     <div>
       {/* Topic Headers */}
       <div className="sticky top-0 flex justify-center mb-0">
-        <div
-          className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}
-        >
-          <p
-            className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}
+        {selectedKeywords.length > 0 && (
+          <div className="mr-5 flex">
+            {selectedKeywords.map((e, idx) => (
+              <div className="ml-1" onClick={() => deSelectKeyword(e, idx)}>
+                <div
+                  className={`bg-gray-500 cursor-pointer w-auto pr-5 mt-1 mb-0 shadow-lg rounded-2xl border-2 hover:scale-105 transition-all`}
+                >
+                  <p className="pl-2 text-white font-ez">x</p>
+                  <p
+                    style={{}}
+                    className={`-mt-5 text-white bg-clip-text font-ez text-lg z-[10000]  pl-5`}
+                  >
+                    {e[0].toLowerCase()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {keywords.map((e, idx) => (
+          <div
+            onClick={() => selectKeyword(e, idx)}
+            className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white border-2 hover:scale-105 transition-all`}
           >
-            taylor swift
-          </p>
-        </div>
-        <div
-          className={`cursor-pointer ml-1 w-auto pl-5 pr-5 mt-1 mb-0 shadow-lg rounded-2xl bg-white ${gradients[0][1]} border-2 hover:scale-105 transition-all`}
-        >
-          <p
-            className={`text-transparent font-ez bg-clip-text text-lg z-[10000] bg-gradient-to-r ${gradients[0][0]}`}
-          >
-            lol
-          </p>
-        </div>
+            <p
+              style={{
+                backgroundImage: `linear-gradient(to right, ${
+                  gradients.random()[0]
+                })`,
+              }}
+              className={`text-transparent bg-clip-text font-ez text-lg z-[10000]`}
+            >
+              {e[0].toLowerCase()}
+            </p>
+          </div>
+        ))}
       </div>
       {/* Feed */}
       {feed.length === 0 && buffers.length === 0 ? (
