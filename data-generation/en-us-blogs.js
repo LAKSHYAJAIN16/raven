@@ -67,7 +67,6 @@ file.on("line", async (line) => {
   } catch (err) {}
 });
 
-console.log(texts.length);
 file.on("close", async () => {
   let j = 0;
   for (let k = 0; k < texts.length; k++) {

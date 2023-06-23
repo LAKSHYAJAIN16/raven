@@ -49,8 +49,12 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
         const payload = {
           id: object._id,
           t: object.text,
+          uID : object.userID,
+          name : object.user,
+          type : object.type,
+          pfpic : object.userPfpic,
         };
-        const url = `${mlURL}/embed?t=${payload.t}&id=${payload.id}`;
+        const url = `${mlURL}/embed?t=${payload.t}&id=${payload.id}&uID=${payload.uID}&type=${payload.type}&pfpic=${payload.pfpic}&name=${payload.name}`;
         const res = await axios.get(url);
 
         // Get the embeddings
@@ -471,6 +475,9 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     else{
       setKeywords(n_keywords);
     }
+
+    // Keyword Search
+    console.log(UserMLProfile.predict_keywords(s_keywords, 10));
   };
 
   const deSelectKeyword = (keyword, idx) => {
@@ -496,7 +503,7 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
       {/* Topic Headers */}
       <div className="sticky top-0 flex justify-center mb-0">
         {selectedKeywords.length > 0 && (
-          <div className="mr-5 flex">
+          <div className="mr-10 flex">
             {selectedKeywords.map((e, idx) => (
               <div className="ml-1" onClick={() => deSelectKeyword(e, idx)}>
                 <div

@@ -4,6 +4,7 @@ import string
 import random
 import os
 import math
+import json
 from nltk import word_tokenize, pos_tag, RegexpParser
 from nltk.corpus import stopwords
 from chromadb.config import Settings
@@ -31,6 +32,7 @@ grammar = """
 stop_words = set(stopwords.words('english'))
 cp = RegexpParser(grammar)
 
+
 @app.route("/")
 @cross_origin()
 def home():
@@ -55,7 +57,15 @@ def embed():
     collection.add(
         ids=id,
         documents=[txt],
-        embeddings=embeddings
+        embeddings=embeddings,
+        metadatas=[
+            {
+                "uID" : dat["uID"],
+                "username" : dat["name"],
+                "type" : dat["type"],
+                "uPfpic" : dat["pfpic"],
+            }
+        ]
     )
 
     # We also need to convert it into keywords
@@ -83,12 +93,11 @@ def embed():
 
             if len(s) != 0:
                 return_res.append(s)
-            
 
     return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings, "keywords": return_res})
 
 
-@app.route("/query/byEmbeddings", methods=["POST"])
+@app.route("/byEmbeddings", methods=["POST"])
 @cross_origin()
 def byEmbeddings():
     start_time = time.time()
@@ -112,6 +121,30 @@ def byEmbeddings():
     result = {
         "centre": res2,
         "embedding_single": embed_results,
+        "exec_time": exec_time,
+    }
+    return jsonify(result)
+
+
+@app.route("/byKeywords")
+@cross_origin()
+def byKeywords():
+    start_time = time.time()
+    dat = request.args.to_dict()
+    keywords = json.dumps(dat["keywords"])
+    n = int(dat["n"])
+    
+    # Query individually
+    results = []
+    for m in keywords:
+        res = collection.query(
+            query_texts=[m],
+            n_results=n
+        )
+        results.append(res)
+    exec_time = time.time() - start_time
+    result = {
+        "vals": results,
         "exec_time": exec_time,
     }
     return jsonify(result)

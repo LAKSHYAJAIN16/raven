@@ -150,7 +150,7 @@ export default class ReccomendationManager {
     const centre = this.find_weighted_center();
 
     // Now, send request to our ML backend
-    const url = `http://localhost:1010/query/byEmbeddings`;
+    const url = `http://localhost:1010/byEmbeddings`;
     const payload = {
       centre: centre,
       embeddings: this.N_EMBEDDINGS,
@@ -205,4 +205,10 @@ export class UserMLProfile {
     sortable.length = n;
     return sortable;
   };
+
+  static predict_keywords = async(keywords,n) => {
+    const res = await axios.get(`http://localhost:1010/byKeywords?keywords=${JSON.stringify(keywords)}&n=${n}`)
+    console.log(res.data.vals);
+    return res.data.vals;
+  }
 }
