@@ -29,7 +29,7 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
 
       // Set Up reccomendation engine!
       ReccomendationManager.init();
-      setKeywords(UserMLProfile.most_frequent());
+      setKeywords(UserMLProfile.most_frequent(5));
 
       // Lib XD
       Array.prototype.random = function () {
@@ -448,7 +448,8 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     // Send that payload to our reccomendation manager
     ReccomendationManager.init();
     ReccomendationManager.add_embeddings(n_payload);
-    await ReccomendationManager.chroma_predict();
+    // await ReccomendationManager.chroma_predict();
+    console.log(UserMLProfile.most_frequent(10))
   };
 
   const selectKeyword = (keyword, idx) => {

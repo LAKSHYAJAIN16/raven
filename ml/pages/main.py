@@ -94,6 +94,7 @@ def embed():
             if len(s) != 0:
                 return_res.append(s)
 
+    print(return_res)
     return jsonify({"chroma": collection.get(dat["id"]), "embeddings": embeddings, "keywords": return_res})
 
 

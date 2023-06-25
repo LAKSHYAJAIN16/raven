@@ -131,7 +131,7 @@ file.on("close", async () => {
         if (res2.data.data._id === null || res2.data.data._id === undefined)
           continue;
         // Now generate embeddings
-        const embedding_url = `http://127.0.0.1:1010/embed?t=${f_text}&id=${res2.data.data._id}`;
+        const embedding_url = `http://127.0.0.1:1010/embed?t=${n_text}&id=${res2.data.data._id}&uID=${client.data._id}&name=${client.data.username}&type=1&pfpic=${client.data.profilePic}`;
         console.log(embedding_url);
         const res3 = await axios.get(embedding_url);
 

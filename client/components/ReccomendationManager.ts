@@ -181,6 +181,7 @@ export class UserMLProfile {
     const map = {};
     for (let i = 0; i < this.N_DOCS.length; i++) {
       const words = this.N_DOCS[i]["pos"]
+      console.log(words);
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
         if (Object.keys(map).includes(word)) {
@@ -202,6 +203,8 @@ export class UserMLProfile {
     });
 
     sortable.reverse();
+    console.log(sortable);
+    console.log(map);
     sortable.length = n;
     return sortable;
   };
