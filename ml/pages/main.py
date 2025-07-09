@@ -18,8 +18,7 @@ CORS(app)
 
 # init chroma
 chroma_client = chromadb.Client(Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory=os.path.basename("D:\Projects\v3\raven\data")
+    chroma_db_impl="duckdb+parquet"
 ))
 embedding_function = embedding_fn()
 collection = chroma_client.create_collection(

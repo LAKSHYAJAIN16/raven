@@ -25,6 +25,7 @@ const Signup: React.FC = () => {
     //Send it to our backend
     setLoading(true);
     const res = await axios.post(backendURL + "/email/verify-email", formData);
+    console.log(res)
     const id: string = res.data.otp_object._id;
     const uID: string = res.data.otp_object.username;
 

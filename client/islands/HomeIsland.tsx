@@ -438,8 +438,8 @@ const HomeIsland: FC<HomeIslandProps> = ({ buffers, removeBuffer }) => {
     console.log(res2.data.data);
 
     const n_payload = {
-      embeddings: res2.data.data.embeddings,
-      pos: res2.data.data.pos,
+      embeddings: [],
+      pos: "",
       text: post["text"],
       toc: Date.now(),
       popularity: res.data.data.hearts.length + res.data.data.images.length,

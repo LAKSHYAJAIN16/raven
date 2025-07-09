@@ -23,6 +23,7 @@ async function createUser(req, res) {
           username: req.body.uID.split(":")[0],
           email: req.body.email,
           toc: Date.now(),
+          profilePic: "https://api.dicebear.com/8.x/fun-emoji/svg?seed=" + Date.now()
         });
 
         const act_user = await user.save();
@@ -31,9 +32,9 @@ async function createUser(req, res) {
           data: act_user,
         });
       }
-      else{
+      else {
         res.json({
-          code : 4,
+          code: 4,
         })
       }
     } else {
@@ -44,7 +45,7 @@ async function createUser(req, res) {
   } catch (err) {
     res.json({
       code: 3,
-      error : err,
+      error: err,
     });
   }
 }

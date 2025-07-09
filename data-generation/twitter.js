@@ -99,20 +99,20 @@ file.on("close", async () => {
       if (res2.code === 1) continue;
       if (res2.data.data._id === null || res2.data.data._id === undefined)
         continue;
-      // Now generate embeddings
-      const embedding_url = `http://127.0.0.1:1010/embed?t=${n_text}&id=${res2.data.data._id}`;
-      console.log(embedding_url);
-      const res3 = await axios.get(embedding_url);
+      // // Now generate embeddings
+      // const embedding_url = `http://127.0.0.1:1010/embed?t=${n_text}&id=${res2.data.data._id}`;
+      // console.log(embedding_url);
+      // const res3 = await axios.get(embedding_url);
 
-      // Now, send this data to backend
-      const embedding_payload = {
-        id: res2.data.data._id,
-        embeddings: res3.data.embeddings[0],
-      };
-      const res4 = await axios.post(
-        "http://localhost:5000/create/embedding",
-        embedding_payload
-      );
+      // // Now, send this data to backend
+      // const embedding_payload = {
+      //   id: res2.data.data._id,
+      //   embeddings: res3.data.embeddings[0],
+      // };
+      // const res4 = await axios.post(
+      //   "http://localhost:5000/create/embedding",
+      //   embedding_payload
+      // );
       console.log({ txt: n_text, agent: j });
 
       if (j === NUM_OF_AGENTS - 1) {
