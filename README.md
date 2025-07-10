@@ -1,8 +1,8 @@
-# raven 🕊️
+# raven
 
 Decentralized, privacy-first social network built with IPFS and OpenAI embeddings. Users retain full control of their data, feed algorithms, and privacy.
 
->  **Warning:** This project is no longer actively maintained.
+**Warning:** This project is no longer actively maintained.
 
 ---
 
